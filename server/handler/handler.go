@@ -6,22 +6,22 @@ import (
 	"net/http"
 )
 
-//AuthorHandler ...
-type AuthorHandler struct {
-	authorRepo dbservice.AuthorRepo
+//GeneralHandler ...
+type GeneralHandler struct {
+	generalRepo *dbservice.GeneralRepo
 }
 
-func (h AuthorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+//ServeHTTP ...
+func (gh GeneralHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello golang")
 	ctx := r.Context()
-	authorRepo := dbservice.NewAuthorRepo()
-	authorRepo.GetAllAuthors(ctx)
+	gh.generalRepo.GetAll(ctx)
 }
 
-var _ http.Handler = (*AuthorHandler)(nil)
+var _ http.Handler = (*GeneralHandler)(nil)
 
 //Run is a http handler function
-func Run() {
-	http.HandleFunc("/", AuthorHandler{}.ServeHTTP)
+func Run(generalRepo *dbservice.GeneralRepo) {
+	http.HandleFunc("/", GeneralHandler{generalRepo: generalRepo}.ServeHTTP)
 	http.ListenAndServe(":8081", nil)
 }

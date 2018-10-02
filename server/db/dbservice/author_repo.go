@@ -7,21 +7,29 @@ import (
 	"log"
 )
 
-type JoinRepo struct {
+//AuthorRepo ...
+type AuthorRepo struct {
+	DBer
 }
 
-func NewJoinRepo() *JoinRepo {
-	return &JoinRepo{}
+//NewAuthorRepo ...
+func NewAuthorRepo(conn *Conn) *AuthorRepo {
+	return &AuthorRepo{
+		DBer: conn,
+	}
 }
 
-func (join *JoinRepo) JoinAll(cxt context.Context) {
-	//dbConn := author.DBer.DB()
+//GetAllAuthors ...
+func (author *AuthorRepo) GetAllAuthors(cxt context.Context) {
+	dbConn := author.DBer.DB()
 	rows, err := dbConn.QueryContext(cxt, "SELECT last_name FROM authors")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
+
 	authors := []*models.Authors{}
+
 	for rows.Next() {
 		var (
 			last_name string
