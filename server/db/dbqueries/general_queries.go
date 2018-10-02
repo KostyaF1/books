@@ -1,6 +1,18 @@
-package dbservice
+package dbqueries
 
-var generalQuerie = `SELECT authors.last_name AS lastName,
+//GeneralQuerie ...
+type GeneralQuerie struct {
+	ID        int
+	LastName  string
+	FirstName string
+	BookName  string
+	PageCount int
+	Genre     string
+	BookType  string
+}
+
+//GetAllUnitsQuerie ...
+var GetAllUnitsQuerie = `SELECT authors.last_name AS lastName,
 authors.first_name AS firstName,
 book_products.name AS bookName,
 page_count AS pageCount,

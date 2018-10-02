@@ -1,7 +1,6 @@
-package dbservice
+package db
 
 import (
-	"books/server/db"
 	"database/sql"
 	"log"
 	//postgresql driver
@@ -24,7 +23,7 @@ func (con *Conn) DB() *sql.DB {
 }
 
 //NewConn function opens new connection with a data base
-func NewConn(config *db.DataConfig) (*Conn, error) {
+func NewConn(config *DataConfig) (*Conn, error) {
 	dbConn, err := sql.Open(config.Driver, config.DataSource)
 	if err != nil {
 		return nil, err

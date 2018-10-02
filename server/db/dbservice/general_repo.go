@@ -1,44 +1,34 @@
 package dbservice
 
 import (
+	"books/server/db"
+	"books/server/db/dbqueries"
 	"context"
-	"fmt"
 	"log"
 )
 
-//General ...
-type General struct {
-	ID        int
-	LastName  string
-	FirstName string
-	BookName  string
-	PageCount int
-	Genre     string
-	BookType  string
-}
-
 //GeneralRepo ...
 type GeneralRepo struct {
-	DBer
+	db.DBer
 }
 
 //NewGeneralRepo ...
-func NewGeneralRepo(conn *Conn) *GeneralRepo {
+func NewGeneralRepo(conn *db.Conn) *GeneralRepo {
 	return &GeneralRepo{
 		DBer: conn,
 	}
 }
 
-//GetAll ...
-func (generalRepo *GeneralRepo) GetAll(cxt context.Context) {
+//GetAllUnits ...
+func (generalRepo GeneralRepo) GetAllUnits(cxt context.Context) []*dbqueries.GeneralQuerie {
 	dbConn := generalRepo.DBer.DB()
-	rows, err := dbConn.QueryContext(cxt, generalQuerie)
+	rows, err := dbConn.QueryContext(cxt, dbqueries.GetAllUnitsQuerie)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
-	allStuff := []*General{}
+	allStuff := []*dbqueries.GeneralQuerie{}
 
 	for rows.Next() {
 		var (
@@ -52,7 +42,7 @@ func (generalRepo *GeneralRepo) GetAll(cxt context.Context) {
 
 		rows.Scan(&lastName, &firstName, &bookName, &pageCount, &productType, &genreName)
 
-		allStuff = append(allStuff, &General{
+		allStuff = append(allStuff, &dbqueries.GeneralQuerie{
 			LastName:  lastName,
 			FirstName: firstName,
 			BookName:  bookName,
@@ -61,8 +51,5 @@ func (generalRepo *GeneralRepo) GetAll(cxt context.Context) {
 			BookType:  productType,
 		})
 	}
-	for _, stuff := range allStuff {
-		fmt.Println(stuff.BookName, stuff.LastName, stuff.FirstName,
-			stuff.Genre, stuff.BookType, stuff.BookType)
-	}
+	return allStuff
 }

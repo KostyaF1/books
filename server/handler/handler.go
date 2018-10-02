@@ -1,27 +1,34 @@
 package handler
 
 import (
-	"books/server/db/dbservice"
+	"books/server/routing"
 	"fmt"
 	"net/http"
 )
 
 //GeneralHandler ...
 type GeneralHandler struct {
-	generalRepo *dbservice.GeneralRepo
+	routIn *routing.RouterIn
+}
+
+//NewGeneralHandler ...
+func NewGeneralHandler(routIn *routing.RouterIn) *GeneralHandler {
+	return &GeneralHandler{
+		routIn: routIn,
+	}
 }
 
 //ServeHTTP ...
 func (gh GeneralHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello golang")
+	uri := r.RequestURI
 	ctx := r.Context()
-	gh.generalRepo.GetAll(ctx)
+	fmt.Fprintf(w, gh.routIn.Rout(ctx, uri))
 }
 
 var _ http.Handler = (*GeneralHandler)(nil)
 
 //Run is a http handler function
-func Run(generalRepo *dbservice.GeneralRepo) {
-	http.HandleFunc("/", GeneralHandler{generalRepo: generalRepo}.ServeHTTP)
+func Run(generalHandler GeneralHandler) {
+	http.HandleFunc("/", generalHandler.ServeHTTP)
 	http.ListenAndServe(":8081", nil)
 }
