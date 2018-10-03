@@ -28,23 +28,21 @@ func (generalRepo GeneralRepo) GetAllUnits(cxt context.Context) []*dbqueries.Gen
 	}
 	defer rows.Close()
 
-	allStuff := []*dbqueries.GeneralQuerie{}
+	var allStuff []*dbqueries.GeneralQuerie
 
 	for rows.Next() {
 		var (
-			lastName    string
-			firstName   string
 			bookName    string
-			pageCount   int
 			genreName   string
 			productType string
+			pageCount   int
+			author      string
 		)
 
-		rows.Scan(&lastName, &firstName, &bookName, &pageCount, &productType, &genreName)
+		rows.Scan(&bookName, &genreName, &productType, &pageCount, &author)
 
 		allStuff = append(allStuff, &dbqueries.GeneralQuerie{
-			LastName:  lastName,
-			FirstName: firstName,
+			Author:    author,
 			BookName:  bookName,
 			PageCount: pageCount,
 			Genre:     genreName,
