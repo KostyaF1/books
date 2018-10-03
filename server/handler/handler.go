@@ -1,22 +1,34 @@
 package handler
 
 import (
-	"books/server/db/dbservice"
+	"books/server/routing"
 	"fmt"
-	"log"
 	"net/http"
 )
 
-func myHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello golang")
-	auth := dbservice.AuthorDB{}
-	auth.ASelect()
-
+//GeneralHandler ...
+type GeneralHandler struct {
+	routIn *routing.RouterIn
 }
 
-//Handler is a http handler function
-func Handler() {
-	go http.HandleFunc("/", myHandler)
-	http.ListenAndServe(":8080", nil)
-	log.Println("Server listening")
+//NewGeneralHandler ...
+func NewGeneralHandler(routIn *routing.RouterIn) *GeneralHandler {
+	return &GeneralHandler{
+		routIn: routIn,
+	}
+}
+
+//ServeHTTP ...
+func (gh GeneralHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	uri := r.RequestURI
+	ctx := r.Context()
+	fmt.Fprintf(w, gh.routIn.Rout(ctx, uri))
+}
+
+var _ http.Handler = (*GeneralHandler)(nil)
+
+//Run is a http handler function
+func Run(generalHandler GeneralHandler) {
+	http.HandleFunc("/", generalHandler.ServeHTTP)
+	http.ListenAndServe(":8081", nil)
 }
