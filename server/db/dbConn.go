@@ -1,36 +1,46 @@
 package db
 
 import (
+	"books/server/conf"
 	"database/sql"
-	"log"
-	//postgresql driver
+	//PostgreSQL driver
 	_ "github.com/lib/pq"
 )
 
-//Conn ...
+//Connector interface for connection to database
+type Connector interface {
+	Connect() *sql.DB
+}
+
+//conn ...
 type Conn struct {
-	DBConn *sql.DB
+	config *conf.Config
+	dbConn *sql.DB
 }
 
-//DBer interface for connection to database
-type DBer interface {
-	DB() *sql.DB
+var _ Connector = (*Conn)(nil)
+
+//NewConn ...
+func NewConn() *Conn {
+	return new(Conn)
 }
 
-//DB ...
-func (con *Conn) DB() *sql.DB {
-	return con.DBConn
+//Inject ...
+func (c *Conn) Inject(config conf.Config) {
+	c.config = &config
+	c.init()
 }
 
-//NewConn function opens new connection with a data base
-func NewConn(config *DataConfig) (*Conn, error) {
-	dbConn, err := sql.Open(config.Driver, config.DataSource)
+//init function opens new connection with a data base
+func (c *Conn) init() {
+	dbConn, err := sql.Open(c.config.Driver, c.config.DBUrl)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
+	c.dbConn = dbConn
+}
 
-	log.Println("DB Open Ok")
-	return &Conn{
-		DBConn: dbConn,
-	}, nil
+//Connect ...
+func (c *Conn) Connect() *sql.DB {
+	return c.dbConn
 }

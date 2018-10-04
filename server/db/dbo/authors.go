@@ -1,4 +1,4 @@
-package models
+package dbo
 
 //Authors is a model of a book's author
 type Authors struct {

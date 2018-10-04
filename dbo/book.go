@@ -1,6 +1,6 @@
 package dbo
 
 type Book struct {
-	ID   int
+	ID   int64
 	Name string
 }

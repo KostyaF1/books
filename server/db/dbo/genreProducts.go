@@ -1,4 +1,4 @@
-package models
+package dbo
 
 //GenreProducts is a rilation "many-to-many" between BookProducts and Genres
 type GenreProducts struct {

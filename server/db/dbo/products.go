@@ -1,4 +1,4 @@
-package models
+package dbo
 
 //Products is a model of staff that sales in a store
 type Products struct {

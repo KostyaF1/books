@@ -1,4 +1,4 @@
-package models
+package dbo
 
 //ProductTypes is a model of BookProducts type
 type ProductTypes struct {
