@@ -8,8 +8,13 @@ import (
 
 type (
 	BookReq struct {
-		ID   int64  `json:"id"`
-		Name string `json:"name"`
+		ID            int64  `json:"id"`
+		Name          string `json:"name"`
+		Genre         string `json:"genre"`
+		BookType      string `json:"book_type"`
+		PageCount     int    `json:"page_count"`
+		AuthorName    string `json:"author_name"`
+		AuthorSurname string `json:"author_surname"`
 	}
 	BookResp struct {
 		ID       int64       `json:"id"`
@@ -44,6 +49,7 @@ func (b *book) CreateBook(ctx context.Context, req BookReq) BookResp {
 	book := dbo.Book{
 		Name: req.Name,
 	}
+
 	if err := b.books.Create(ctx, book); err != nil {
 		return BookResp{
 			Error: err,
@@ -56,8 +62,9 @@ func (b *book) CreateBook(ctx context.Context, req BookReq) BookResp {
 
 func (b *book) DeleteBook(ctx context.Context, req BookReq) BookResp {
 	book := dbo.Book{
-		Name: req.Name,
+		ID: req.ID,
 	}
+
 	if err := b.books.Delete(ctx, book.ID); err != nil {
 		return BookResp{
 			Error: err,
@@ -70,6 +77,7 @@ func (b *book) DeleteBook(ctx context.Context, req BookReq) BookResp {
 
 func (b *book) GetAllBooks(ctx context.Context) BookResp {
 	allBooks := b.books.GetAll(ctx)
+
 	return BookResp{
 		AllBooks: allBooks,
 	}
