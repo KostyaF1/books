@@ -10,14 +10,14 @@ import (
 )
 
 type createBook struct {
-	createBook service.CreateBook
+	createBook service.Book
 }
 
 func NewCreateBook() *createBook {
 	return new(createBook)
 }
 
-func (cb *createBook) Inject(newBook service.CreateBook) {
+func (cb *createBook) Inject(newBook service.Book) {
 	cb.createBook = newBook
 }
 
@@ -32,14 +32,14 @@ func (cb *createBook) Method() (method string) {
 	return http.MethodPost
 }
 
-func (cb *createBook) create(ctx context.Context, req service.CreateBookReq) service.CreateBookResp {
+func (cb *createBook) create(ctx context.Context, req service.BookReq) service.BookResp {
 	newBook := cb.createBook.CreateBook(ctx, req)
 
 	return newBook
 }
 
 func (cb *createBook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var newBookReq service.CreateBookReq
+	var newBookReq service.BookReq
 	defer r.Body.Close()
 	ctx := r.Context()
 

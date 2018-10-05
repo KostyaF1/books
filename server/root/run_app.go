@@ -25,23 +25,17 @@ func (a *App) Run() {
 	booksRepo := repo.NewBooks()
 	booksRepo.Inject(dbConn)
 
-	createBook := service.NewCreateBook()
-	createBook.Inject(booksRepo)
-
-	deleteBook := service.NewDeleteBook()
-	deleteBook.Inject(booksRepo)
-
-	getAllBooks := service.NewGetAllBooks()
-	getAllBooks.Inject(booksRepo)
+	book := service.NewBook()
+	book.Inject(booksRepo)
 
 	createBookHandler := bookHandlers.NewCreateBook()
-	createBookHandler.Inject(createBook)
+	createBookHandler.Inject(book)
 
 	deleteBookHandler := bookHandlers.NewDeleteBook()
-	deleteBookHandler.Inject(deleteBook)
+	deleteBookHandler.Inject(book)
 
 	getAllBooksHandler := bookHandlers.NewGetAllBooks()
-	getAllBooksHandler.Inject(getAllBooks)
+	getAllBooksHandler.Inject(book)
 
 	router := mux.NewRouter()
 

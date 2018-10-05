@@ -8,15 +8,9 @@ import (
 	"log"
 )
 
-type Create interface {
+type Books interface {
 	Create(ctx context.Context, book dbo.Book) error
-}
-
-type Delete interface {
-	Delete(ctx context.Context, name string) error
-}
-
-type GetAll interface {
+	Delete(ctx context.Context, id int64) error
 	GetAll(ctx context.Context) []*dbo.Book
 }
 
@@ -25,9 +19,7 @@ type books struct {
 	dbConn db.Connector
 }
 
-var _ Create = (*books)(nil)
-var _ Delete = (*books)(nil)
-var _ GetAll = (*books)(nil)
+var _ Books = (*books)(nil)
 
 func NewBooks() *books {
 	return new(books)
@@ -41,7 +33,7 @@ func (b *books) Create(ctx context.Context, book dbo.Book) error {
 	return nil
 }
 
-func (b *books) Delete(ctx context.Context, name string) error {
+func (b *books) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
@@ -53,19 +45,23 @@ func (b *books) GetAll(ctx context.Context) []*dbo.Book {
 		log.Println("Error when GetAll" + err.Error())
 	}
 
-	allBooks := []*dbo.Book{}
+	var allBooks []*dbo.Book
 
 	for rows.Next() {
 		var (
-			bookName        string
-			authorLastName  string
-			authorFirstName string
-			bookType        string
-			genre           string
+			bookName  string
+			genre     string
+			bookType  string
+			pageCount int
+			author    string
 		)
-		rows.Scan(&bookName, &authorLastName, &authorFirstName, &bookType, &genre)
+		rows.Scan(&bookName, &genre, &bookType, &pageCount, &author)
 		allBooks = append(allBooks, &dbo.Book{
-			Name: bookName,
+			Name:      bookName,
+			BookType:  bookType,
+			Genre:     genre,
+			PageCount: pageCount,
+			Author:    author,
 		})
 	}
 	return allBooks

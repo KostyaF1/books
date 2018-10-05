@@ -10,14 +10,14 @@ import (
 )
 
 type deleteBook struct {
-	deleteBook service.DeleteBook
+	deleteBook service.Book
 }
 
 func NewDeleteBook() *deleteBook {
 	return new(deleteBook)
 }
 
-func (d *deleteBook) Inject(deleteBook service.DeleteBook) {
+func (d *deleteBook) Inject(deleteBook service.Book) {
 	d.deleteBook = deleteBook
 }
 
@@ -32,14 +32,14 @@ func (d *deleteBook) Method() (method string) {
 	return http.MethodPost
 }
 
-func (d *deleteBook) delete(ctx context.Context, req service.DeleteBookReq) service.DeleteBookResp {
+func (d *deleteBook) delete(ctx context.Context, req service.BookReq) service.BookResp {
 	delBook := d.deleteBook.DeleteBook(ctx, req)
 
 	return delBook
 }
 
 func (d *deleteBook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var delBookReq service.DeleteBookReq
+	var delBookReq service.BookReq
 	defer r.Body.Close()
 	ctx := r.Context()
 
