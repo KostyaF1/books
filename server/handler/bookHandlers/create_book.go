@@ -3,7 +3,6 @@ package bookHandlers
 import (
 	"books/server/handler"
 	"books/server/service"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -32,14 +31,14 @@ func (cb *createBook) Method() (method string) {
 	return http.MethodPost
 }
 
-func (cb *createBook) create(ctx context.Context, req service.BookReq) service.BookResp {
-	newBook := cb.createBook.CreateBook(ctx, req)
-
-	return newBook
-}
+//func (cb *createBook) create(ctx context.Context, req service.CreateBookReq) service.CreateBookResp {
+//	newBook := cb.createBook.CreateBook(ctx, req)
+//
+//	return newBook
+//}
 
 func (cb *createBook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var newBookReq service.BookReq
+	var newBookReq service.CreateBookReq
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -49,7 +48,7 @@ func (cb *createBook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := cb.create(ctx, newBookReq)
+	response := cb.createBook.CreateBook(ctx, newBookReq)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

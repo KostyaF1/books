@@ -53,7 +53,7 @@ func (a *App) Run() {
 
 	server := http.Server{
 		Handler: router,
-		Addr:    "localhost:8080",
+		Addr:    "localhost:8081",
 	}
 
 	server.ListenAndServe()

@@ -1,7 +1,7 @@
 package query
 
 const GetAllUnitsQuerie = `
-SELECT book_products.name                                                                           AS bookName,
+SELECT book_products.id, book_products.name                                                                           AS bookName,
        array(SELECT genres.name
              FROM genres
              WHERE genres.id IN

@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	BookReq struct {
+	CreateBookReq struct {
 		ID            int64  `json:"id"`
 		Name          string `json:"name"`
 		Genre         string `json:"genre"`
@@ -16,18 +16,30 @@ type (
 		AuthorName    string `json:"author_name"`
 		AuthorSurname string `json:"author_surname"`
 	}
-	BookResp struct {
-		ID       int64       `json:"id"`
-		Name     string      `json:"name"`
+	CreateBookResp struct {
+		ID    int64  `json:"id"`
+		Name  string `json:"name"`
+		Error error  `json:"error"`
+	}
+
+	DeleteBookReq struct {
+		ID int64 `json:"id"`
+	}
+	DeleteBookResp struct {
+		ID    int64  `json:"id"`
+		Name  string `json:"name"`
+		Error error  `json:"error"`
+	}
+
+	GetBookResp struct {
 		AllBooks []*dbo.Book `json:"all_books"`
-		Error    error       `json:"error"`
 	}
 )
 
 type Book interface {
-	CreateBook(ctx context.Context, req BookReq) BookResp
-	DeleteBook(ctx context.Context, req BookReq) BookResp
-	GetAllBooks(ctx context.Context) BookResp
+	CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
+	DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp
+	GetAllBooks(ctx context.Context) GetBookResp
 }
 
 //book ...
@@ -45,40 +57,50 @@ func (b *book) Inject(books repo.Books) {
 	b.books = books
 }
 
-func (b *book) CreateBook(ctx context.Context, req BookReq) BookResp {
+func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp {
 	book := dbo.Book{
-		Name: req.Name,
+		Name:          req.Name,
+		Genre:         req.Genre,
+		BookType:      req.BookType,
+		PageCount:     req.PageCount,
+		AuthorName:    req.AuthorName,
+		AuthorSurname: req.AuthorSurname,
 	}
 
-	if err := b.books.Create(ctx, book); err != nil {
-		return BookResp{
+	id, err := b.books.Create(ctx, book)
+	if err != nil {
+		return CreateBookResp{
 			Error: err,
 		}
 	}
-	return BookResp{
-		ID: book.ID,
+	return CreateBookResp{
+		ID:    id,
+		Error: err,
 	}
+
 }
 
-func (b *book) DeleteBook(ctx context.Context, req BookReq) BookResp {
+func (b *book) DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp {
 	book := dbo.Book{
 		ID: req.ID,
 	}
 
-	if err := b.books.Delete(ctx, book.ID); err != nil {
-		return BookResp{
+	d_id, d_name, err := b.books.Delete(ctx, book.ID)
+	if err != nil {
+		return DeleteBookResp{
 			Error: err,
 		}
 	}
-	return BookResp{
-		ID: book.ID,
+	return DeleteBookResp{
+		ID:   d_id,
+		Name: d_name,
 	}
 }
 
-func (b *book) GetAllBooks(ctx context.Context) BookResp {
+func (b *book) GetAllBooks(ctx context.Context) GetBookResp {
 	allBooks := b.books.GetAll(ctx)
 
-	return BookResp{
+	return GetBookResp{
 		AllBooks: allBooks,
 	}
 }
