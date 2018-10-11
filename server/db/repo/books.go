@@ -17,6 +17,7 @@ type (
 		PageCount     int    `json:"page_count"`
 		AuthorName    string `json:"author_name"`
 		AuthorSurname string `json:"author_surname"`
+		Price         int    `json:"price"`
 	}
 
 	GetBookRepo struct {
@@ -26,13 +27,14 @@ type (
 		BookType  string `json:"book_type"`
 		PageCount int    `json:"page_count"`
 		Author    string `json:"author"`
+		Price     int    `json:"price"`
 	}
 )
 
 type Books interface {
 	Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error)
 	Delete(ctx context.Context, id int64) (int64, string, error)
-	GetAll(ctx context.Context) []*dbo.Book
+	GetAll(ctx context.Context) []*GetBookRepo
 }
 
 //books...
@@ -59,7 +61,6 @@ func (b *books) Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, err
 	}
 
 	var bookID int64
-	//var typeID int64 = 1
 	err = tx.QueryRowContext(
 		ctx,
 		query.CreateBook,
@@ -98,8 +99,19 @@ func (b *books) Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, err
 		return nil, err
 	}
 
+	var storeUnit int64
+
+	err = tx.QueryRowContext(ctx,
+		query.StoreUnit,
+		bookID, book.Price).Scan(&storeUnit)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	return &CreateBookRepo{
-		ID:            bookID,
+		ID:            storeUnit,
 		Name:          book.Name,
 		Genre:         book.Genre,
 		BookType:      book.BookType,

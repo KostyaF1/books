@@ -10,4 +10,5 @@ type Book struct {
 	AuthorName    string `json:"author_name"`
 	AuthorSurname string `json:"author_surname"`
 	Author        string `json:"author"`
+	Price         int    `json:"price"`
 }

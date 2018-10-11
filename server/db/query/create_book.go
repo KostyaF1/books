@@ -25,3 +25,7 @@ const AuthorBook = `INSERT INTO author_products (book_product_id, author_id)
 
 const GenreBook = `INSERT INTO product_genres (book_product_id, genre_id)
 					VALUES ($1, (SELECT id FROM genres WHERE name = $2));`
+
+const StoreUnit = `INSERT INTO store_units (book_product_id, price)
+					VALUES ($1, $2) ON CONFLICT (book_product_id) DO UPDATE SET
+					book_product_id = EXCLUDED.book_product_id RETURNING id;`

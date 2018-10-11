@@ -15,6 +15,7 @@ type (
 		PageCount     int    `json:"page_count"`
 		AuthorName    string `json:"author_name"`
 		AuthorSurname string `json:"author_surname"`
+		Price         int    `json:"price"`
 	}
 	CreateBookResp struct {
 		ID            int64  `json:"id"`
@@ -24,6 +25,7 @@ type (
 		PageCount     int    `json:"page_count"`
 		AuthorName    string `json:"author_name"`
 		AuthorSurname string `json:"author_surname"`
+		Price         int    `json:"price"`
 		Error         error  `json:"error"`
 	}
 
@@ -37,7 +39,7 @@ type (
 	}
 
 	GetBookResp struct {
-		AllBooks []*dbo.Book `json:"all_books"`
+		AllBooks []*repo.GetBookRepo `json:"all_books"`
 	}
 )
 
@@ -70,6 +72,7 @@ func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 		PageCount:     req.PageCount,
 		AuthorName:    req.AuthorName,
 		AuthorSurname: req.AuthorSurname,
+		Price:         req.Price,
 	}
 
 	bookResp, err := b.books.Create(ctx, book)
@@ -86,6 +89,7 @@ func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 		PageCount:     bookResp.PageCount,
 		AuthorName:    bookResp.AuthorName,
 		AuthorSurname: bookResp.AuthorSurname,
+		Price:         bookResp.Price,
 		Error:         err,
 	}
 }
