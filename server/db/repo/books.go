@@ -162,8 +162,9 @@ func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
 			bookType  string
 			pageCount int
 			author    string
+			price     int
 		)
-		rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author)
+		rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author, &price)
 		allBooks = append(allBooks, &GetBookRepo{
 			ID:        id,
 			Name:      bookName,
@@ -171,6 +172,7 @@ func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
 			BookType:  bookType,
 			PageCount: pageCount,
 			Author:    author,
+			Price:     price,
 		})
 	}
 	return allBooks

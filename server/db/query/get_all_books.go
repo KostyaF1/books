@@ -1,7 +1,7 @@
 package query
 
 const GetAllUnitsQuerie = `
-SELECT book_products.id, book_products.name                                                                           AS bookName,
+SELECT (SELECT id FROM store_units), book_products.name  AS bookName,
        array(SELECT genres.name
              FROM genres
              WHERE genres.id IN
@@ -14,6 +14,7 @@ SELECT book_products.id, book_products.name                                     
              FROM authors
              WHERE authors.id IN (SELECT author_products.author_id
                                   FROM author_products
-                                  WHERE author_products.book_product_id = book_products.id)) AS author
+                                  WHERE author_products.book_product_id = book_products.id)) AS author,
+       (SELECT store_units.price FROM store_units WHERE book_product_id = book_products.id) AS price
 FROM book_products
 INNER JOIN product_types  on book_products.type = product_types.id;`

@@ -31,12 +31,6 @@ func (cb *createBook) Method() (method string) {
 	return http.MethodPost
 }
 
-//func (cb *createBook) create(ctx context.Context, req service.CreateBookReq) service.CreateBookResp {
-//	newBook := cb.createBook.CreateBook(ctx, req)
-//
-//	return newBook
-//}
-
 func (cb *createBook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var newBookReq service.CreateBookReq
 	defer r.Body.Close()
