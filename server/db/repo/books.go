@@ -29,12 +29,23 @@ type (
 		Author    string `json:"author"`
 		Price     int    `json:"price"`
 	}
+	GetBookIDRepo struct {
+		ID        int64  `json:"id"`
+		Name      string `json:"name"`
+		Genre     string `json:"genre"`
+		BookType  string `json:"book_type"`
+		PageCount int    `json:"page_count"`
+		Author    string `json:"author"`
+		Price     int    `json:"price"`
+		Comments  string `json:"comments"`
+	}
 )
 
 type Books interface {
 	Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error)
 	Delete(ctx context.Context, id int64) (int64, string, error)
 	GetAll(ctx context.Context) []*GetBookRepo
+	GetByID(ctx context.Context) *GetBookIDRepo
 }
 
 //books...
@@ -176,4 +187,38 @@ func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
 		})
 	}
 	return allBooks
+}
+
+func (b *books) GetByID(ctx context.Context) *GetBookIDRepo {
+	dbConn := b.dbConn.Connect()
+	rows, err := dbConn.QueryContext(ctx, query.GetBookByID, 1)
+	if err != nil {
+		log.Println("Error when GetAll" + err.Error())
+	}
+
+	var (
+		id        int64
+		bookName  string
+		genre     string
+		bookType  string
+		pageCount int
+		author    string
+		price     int
+		comments  string
+	)
+
+	rows.Next()
+
+	rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author, &price, &comments)
+
+	return &GetBookIDRepo{
+		ID:        id,
+		Name:      bookName,
+		Genre:     genre,
+		BookType:  bookType,
+		PageCount: pageCount,
+		Author:    author,
+		Price:     price,
+		Comments:  comments,
+	}
 }

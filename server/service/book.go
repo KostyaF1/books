@@ -41,12 +41,16 @@ type (
 	GetBookResp struct {
 		AllBooks []*repo.GetBookRepo `json:"all_books"`
 	}
+	GetBookIDResp struct {
+		Book *repo.GetBookIDRepo `json:"book"`
+	}
 )
 
 type Book interface {
 	CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 	DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp
 	GetAllBooks(ctx context.Context) GetBookResp
+	GetBookByID(ctx context.Context) GetBookIDResp
 }
 
 //book ...
@@ -116,5 +120,13 @@ func (b *book) GetAllBooks(ctx context.Context) GetBookResp {
 
 	return GetBookResp{
 		AllBooks: allBooks,
+	}
+}
+
+func (b *book) GetBookByID(ctx context.Context) GetBookIDResp {
+	Book := b.books.GetByID(ctx)
+
+	return GetBookIDResp{
+		Book: Book,
 	}
 }

@@ -38,6 +38,9 @@ func (a *App) Run() {
 	getAllBooksHandler := bookHandlers.NewGetAllBooks()
 	getAllBooksHandler.Inject(book)
 
+	getBookIDHandler := bookHandlers.NewGetBookByID()
+	getBookIDHandler.Inject(book)
+
 	commentRepo := repo.NewComment()
 	commentRepo.Inject(dbConn)
 
@@ -56,6 +59,10 @@ func (a *App) Run() {
 	router.
 		Handle(getAllBooksHandler.Path(), getAllBooksHandler).
 		Methods(getAllBooksHandler.Method())
+
+	router.
+		Handle(getBookIDHandler.Path(), getBookIDHandler).
+		Methods(getBookIDHandler.Method())
 
 	router.
 		Handle(deleteBookHandler.Path(), deleteBookHandler).
