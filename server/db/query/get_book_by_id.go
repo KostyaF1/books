@@ -7,9 +7,9 @@ const GetBookByID = `SELECT id,
              WHERE genres.id IN
                    (SELECT product_genres.genre_id
                     FROM product_genres
-                    WHERE product_genres.book_product_id = store_units.book_product_id))                AS genre,
+                    WHERE product_genres.book_product_id = store_units.book_product_id)) AS genre,
        (SELECT product_types.name FROM product_types WHERE id IN
-                                                           (SELECT type FROM book_products))            AS type,
+                                                           (SELECT type FROM book_products)) AS type,
        (SELECT page_count FROM book_products),
        array(SELECT authors.first_name || ' ' || authors.last_name
              FROM authors
@@ -17,6 +17,6 @@ const GetBookByID = `SELECT id,
                                   FROM author_products
                                   WHERE author_products.book_product_id = store_units.book_product_id)) AS author,
        price,
-       array(SELECT body FROM coments)                                                                  AS comments
+       array(SELECT body || '-author:' || author FROM coments) AS comments
 FROM store_units
 WHERE id = $1;`

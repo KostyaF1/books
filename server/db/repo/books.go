@@ -45,7 +45,7 @@ type Books interface {
 	Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error)
 	Delete(ctx context.Context, id int64) (int64, string, error)
 	GetAll(ctx context.Context) []*GetBookRepo
-	GetByID(ctx context.Context) *GetBookIDRepo
+	GetByID(ctx context.Context, bookID int64) *GetBookIDRepo
 }
 
 //books...
@@ -189,9 +189,9 @@ func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
 	return allBooks
 }
 
-func (b *books) GetByID(ctx context.Context) *GetBookIDRepo {
+func (b *books) GetByID(ctx context.Context, bookID int64) *GetBookIDRepo {
 	dbConn := b.dbConn.Connect()
-	rows, err := dbConn.QueryContext(ctx, query.GetBookByID, 1)
+	rows, err := dbConn.QueryContext(ctx, query.GetBookByID, bookID)
 	if err != nil {
 		log.Println("Error when GetAll" + err.Error())
 	}

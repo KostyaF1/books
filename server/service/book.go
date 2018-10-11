@@ -50,7 +50,7 @@ type Book interface {
 	CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 	DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp
 	GetAllBooks(ctx context.Context) GetBookResp
-	GetBookByID(ctx context.Context) GetBookIDResp
+	GetBookByID(ctx context.Context, id int64) GetBookIDResp
 }
 
 //book ...
@@ -123,8 +123,8 @@ func (b *book) GetAllBooks(ctx context.Context) GetBookResp {
 	}
 }
 
-func (b *book) GetBookByID(ctx context.Context) GetBookIDResp {
-	Book := b.books.GetByID(ctx)
+func (b *book) GetBookByID(ctx context.Context, id int64) GetBookIDResp {
+	Book := b.books.GetByID(ctx, id)
 
 	return GetBookIDResp{
 		Book: Book,
