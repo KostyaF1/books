@@ -17,9 +17,14 @@ type (
 		AuthorSurname string `json:"author_surname"`
 	}
 	CreateBookResp struct {
-		ID    int64  `json:"id"`
-		Name  string `json:"name"`
-		Error error  `json:"error"`
+		ID            int64  `json:"id"`
+		Name          string `json:"name"`
+		Genre         string `json:"genre"`
+		BookType      string `json:"book_type"`
+		PageCount     int    `json:"page_count"`
+		AuthorName    string `json:"author_name"`
+		AuthorSurname string `json:"author_surname"`
+		Error         error  `json:"error"`
 	}
 
 	DeleteBookReq struct {
@@ -67,17 +72,22 @@ func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 		AuthorSurname: req.AuthorSurname,
 	}
 
-	id, err := b.books.Create(ctx, book)
+	bookResp, err := b.books.Create(ctx, book)
 	if err != nil {
 		return CreateBookResp{
 			Error: err,
 		}
 	}
 	return CreateBookResp{
-		ID:    id,
-		Error: err,
+		ID:            bookResp.ID,
+		Name:          bookResp.Name,
+		Genre:         bookResp.Genre,
+		BookType:      bookResp.BookType,
+		PageCount:     bookResp.PageCount,
+		AuthorName:    bookResp.AuthorName,
+		AuthorSurname: bookResp.AuthorSurname,
+		Error:         err,
 	}
-
 }
 
 func (b *book) DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp {

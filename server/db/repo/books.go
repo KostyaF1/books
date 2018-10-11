@@ -8,8 +8,29 @@ import (
 	"log"
 )
 
+type (
+	CreateBookRepo struct {
+		ID            int64  `json:"id"`
+		Name          string `json:"name"`
+		Genre         string `json:"genre"`
+		BookType      string `json:"book_type"`
+		PageCount     int    `json:"page_count"`
+		AuthorName    string `json:"author_name"`
+		AuthorSurname string `json:"author_surname"`
+	}
+
+	GetBookRepo struct {
+		ID        int64  `json:"id"`
+		Name      string `json:"name"`
+		Genre     string `json:"genre"`
+		BookType  string `json:"book_type"`
+		PageCount int    `json:"page_count"`
+		Author    string `json:"author"`
+	}
+)
+
 type Books interface {
-	Create(ctx context.Context, book dbo.Book) (int64, error)
+	Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error)
 	Delete(ctx context.Context, id int64) (int64, string, error)
 	GetAll(ctx context.Context) []*dbo.Book
 }
@@ -29,48 +50,63 @@ func (b *books) Inject(conn db.Connector) {
 	b.dbConn = conn
 }
 
-func (b *books) Create(ctx context.Context, book dbo.Book) (int64, error) {
+func (b *books) Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error) {
 	dbConn := b.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	var bookID int64
-	var typeID int64 = 1
+	//var typeID int64 = 1
 	err = tx.QueryRowContext(
 		ctx,
-		"INSERT INTO book_products (name, page_count, type) VALUES ($1, $2, $3) RETURNING id",
-		book.Name, book.PageCount, typeID,
+		query.CreateBook,
+		book.Name, book.PageCount, book.BookType,
 	).Scan(&bookID)
 
 	if err != nil {
 		tx.Rollback()
-		return 0, err
+		return nil, err
 	}
 
 	var authorID int64
 
 	err = tx.QueryRowContext(ctx,
-		`
-			INSERT INTO authors (first_name, last_name)
-			VALUES ($1, $2) RETURNING id;`, book.AuthorName, book.AuthorSurname).Scan(&authorID)
+		query.CreateAuthor,
+		book.AuthorName, book.AuthorSurname).Scan(&authorID)
 
 	if err != nil {
 		tx.Rollback()
-		return 0, err
+		return nil, err
 	}
 
 	_, err = tx.ExecContext(ctx,
-		`INSERT INTO author_products (book_product_id, author_id)
-							VALUES ($1, $2) RETURNING id;`, bookID, authorID)
+		query.AuthorBook, bookID, authorID)
 	if err != nil {
 		tx.Rollback()
-		return 0, err
+		return nil, err
 	}
 
-	return authorID, tx.Commit()
+	_, err = tx.ExecContext(ctx,
+		query.GenreBook,
+		bookID, book.Genre)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	return &CreateBookRepo{
+		ID:            bookID,
+		Name:          book.Name,
+		Genre:         book.Genre,
+		BookType:      book.BookType,
+		PageCount:     book.PageCount,
+		AuthorName:    book.AuthorName,
+		AuthorSurname: book.AuthorSurname,
+	}, tx.Commit()
 
 }
 
@@ -97,14 +133,14 @@ func (b *books) Delete(ctx context.Context, id int64) (int64, string, error) {
 }
 
 //GetAllUnits ...
-func (b *books) GetAll(ctx context.Context) []*dbo.Book {
+func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
 	dbConn := b.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetAllUnitsQuerie)
 	if err != nil {
 		log.Println("Error when GetAll" + err.Error())
 	}
 
-	var allBooks []*dbo.Book
+	var allBooks []*GetBookRepo
 
 	for rows.Next() {
 		var (
@@ -116,11 +152,11 @@ func (b *books) GetAll(ctx context.Context) []*dbo.Book {
 			author    string
 		)
 		rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author)
-		allBooks = append(allBooks, &dbo.Book{
+		allBooks = append(allBooks, &GetBookRepo{
 			ID:        id,
 			Name:      bookName,
-			BookType:  bookType,
 			Genre:     genre,
+			BookType:  bookType,
 			PageCount: pageCount,
 			Author:    author,
 		})
