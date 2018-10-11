@@ -24,12 +24,16 @@ type (
 	GetCommentsResp struct {
 		Comments []*repo.GetCommentsRepo `json:"comments"`
 	}
+	GetCommIDResp struct {
+		Comm *repo.GetCommIDRepo `json:"comm"`
+	}
 )
 
 type Comment interface {
 	AddComment(ctx context.Context, req AddCommentReq) AddCommentResp
 	AddCommentAnswer(ctx context.Context, req AddCommentReq) AddCommentResp
 	GetComments(ctx context.Context, bookID int64) GetCommentsResp
+	GetCommByID(ctx context.Context, id int64) GetCommIDResp
 }
 
 type comment struct {
@@ -91,5 +95,13 @@ func (cs *comment) GetComments(ctx context.Context, bookID int64) GetCommentsRes
 
 	return GetCommentsResp{
 		Comments: comments,
+	}
+}
+
+func (c *comment) GetCommByID(ctx context.Context, id int64) GetCommIDResp {
+	comment := c.comments.GetByID(ctx, id)
+
+	return GetCommIDResp{
+		Comm: comment,
 	}
 }

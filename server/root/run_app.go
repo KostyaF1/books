@@ -56,6 +56,9 @@ func (a *App) Run() {
 	getCommentsHandler := commentHandlers.NewGetCommentsHandler()
 	getCommentsHandler.Inject(comment)
 
+	getCommentByIDHandler := commentHandlers.NewGetCommentByID()
+	getCommentByIDHandler.Inject(comment)
+
 	router := mux.NewRouter()
 
 	router.
@@ -85,6 +88,10 @@ func (a *App) Run() {
 	router.
 		Handle(getCommentsHandler.Path(), getCommentsHandler).
 		Methods(getCommentsHandler.Method())
+
+	router.
+		Handle(getCommentByIDHandler.Path(), getCommentByIDHandler).
+		Methods(getCommentByIDHandler.Method())
 
 	server := http.Server{
 		Handler: router,

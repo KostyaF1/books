@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9a179fb8-c811-4b23-9de7-4eb26145a422" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/server/db/query/add_comment_answer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/db/query/get_comments.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/handler/commentHandlers/add_comment_answer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/handler/commentHandlers/get_comments.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/db/query/get_comment_by_id.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/handler/commentHandlers/get_comment_by_id.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/db/repo/comments.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/repo/comments.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/root/run_app.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/root/run_app.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/service/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/service/comment.go" afterDir="false" />
     </list>
@@ -35,25 +31,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="go" value="159" />
+          <entry key="go" value="164" />
           <entry key="s" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Go" value="158" />
+          <entry key="Go" value="163" />
           <entry key="Scratch" value="1" />
           <entry key="x86 Plan9 Assembly" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="13813" />
+          <entry key="go" value="14003" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="13738" />
+          <entry key="Go" value="13928" />
           <entry key="Scratch" value="75" />
         </counts>
       </usages-collector>
@@ -67,8 +63,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
+            <state relative-caret-position="334">
+              <caret line="55" column="1" lean-forward="true" selection-start-line="12" selection-end-line="55" selection-end-column="1" />
               <folding>
                 <element signature="e#22#116#0" expanded="true" />
               </folding>
@@ -76,11 +72,41 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/db/repo/comments.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
+            <state relative-caret-position="199">
+              <caret line="36" column="61" selection-start-line="36" selection-start-column="61" selection-end-line="36" selection-end-column="61" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/service/book.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="45" column="5" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="45" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/service/comment.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="35" column="60" selection-start-line="35" selection-start-column="60" selection-end-line="35" selection-end-column="60" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/get_comment_by_id.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="28" column="76" selection-start-line="28" selection-start-column="76" selection-end-line="28" selection-end-column="76" />
+              <folding>
+                <element signature="e#25#108#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -88,8 +114,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/db/repo/books.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
-              <caret line="185" column="29" lean-forward="true" selection-start-line="185" selection-start-column="29" selection-end-line="185" selection-end-column="29" />
+            <state relative-caret-position="334">
+              <caret line="223" column="1" lean-forward="true" selection-start-line="191" selection-end-line="223" selection-end-column="1" />
               <folding>
                 <element signature="e#14#109#0" expanded="true" />
               </folding>
@@ -98,19 +124,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/db/query/get_comments.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/add_comment_answer.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="210">
-              <caret line="26" column="49" lean-forward="true" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="49" />
+              <caret line="26" column="76" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="76" />
               <folding>
                 <element signature="e#25#119#0" expanded="true" />
               </folding>
@@ -121,29 +138,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/root/run_app.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-341">
-              <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
+            <state relative-caret-position="169">
+              <caret line="93" column="37" selection-start-line="93" selection-start-column="37" selection-end-line="93" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/add_comment.go">
+        <entry file="file://$PROJECT_DIR$/server/db/query/get_comment_by_id.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="51" column="1" lean-forward="true" selection-start-line="10" selection-end-line="51" selection-end-column="1" />
-              <folding>
-                <element signature="e#25#119#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="30">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/db/query/add_comment.go">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server/db/query/get_book_by_id.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="34" lean-forward="true" selection-start-line="2" selection-end-line="4" selection-end-column="34" />
+            <state relative-caret-position="315">
+              <caret line="21" column="15" lean-forward="true" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -164,8 +178,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/root/application.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/mocks/mock_repo/books.go" />
         <option value="$PROJECT_DIR$/repo/books.go" />
         <option value="$PROJECT_DIR$/service/book_store_test.go" />
@@ -209,12 +221,14 @@
         <option value="$PROJECT_DIR$/server/db/query/add_comment_answer.go" />
         <option value="$PROJECT_DIR$/server/handler/commentHandlers/add_comment_answer.go" />
         <option value="$PROJECT_DIR$/server/db/query/get_comments.go" />
-        <option value="$PROJECT_DIR$/server/service/comment.go" />
         <option value="$PROJECT_DIR$/server/handler/bookHandlers/get_comments.go" />
-        <option value="$PROJECT_DIR$/server/root/run_app.go" />
         <option value="$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go" />
         <option value="$PROJECT_DIR$/server/handler/commentHandlers/get_comments.go" />
         <option value="$PROJECT_DIR$/server/db/repo/comments.go" />
+        <option value="$PROJECT_DIR$/server/service/comment.go" />
+        <option value="$PROJECT_DIR$/server/handler/commentHandlers/get_comment_by_id.go" />
+        <option value="$PROJECT_DIR$/server/root/run_app.go" />
+        <option value="$PROJECT_DIR$/server/db/query/get_comment_by_id.go" />
       </list>
     </option>
   </component>
@@ -391,8 +405,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="53" y="-4" width="1313" height="772" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4988399" visible="true" weight="0.2573007" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4988399" visible="true" weight="0.2573007" />
       <window_info id="Structure" order="1" sideWeight="0.5011601" side_tool="true" weight="0.2573007" />
       <window_info id="Favorites" order="2" sideWeight="0.50157726" side_tool="true" weight="0.2573007" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -404,7 +419,7 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32919255" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.33074534" />
+      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.33074534" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -793,13 +808,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/db/query/get_book_by_id.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="15" lean-forward="true" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/db/query/add_comment.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -824,63 +832,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/service/book.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="123" column="1" lean-forward="true" selection-start-line="117" selection-end-line="123" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/add_comment_answer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="26" column="49" lean-forward="true" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="49" />
-          <folding>
-            <element signature="e#25#119#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
-          <folding>
-            <element signature="e#22#116#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/root/run_app.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-341">
-          <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/get_comments.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="40" selection-start-line="40" selection-end-line="40" />
           <folding>
             <element signature="e#25#156#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/service/comment.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
-          <caret line="89" column="55" selection-start-line="89" selection-start-column="55" selection-end-line="89" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/db/repo/books.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
-          <caret line="185" column="29" lean-forward="true" selection-start-line="185" selection-start-column="29" selection-end-line="185" selection-end-column="29" />
-          <folding>
-            <element signature="e#14#109#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -892,10 +849,85 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/server/db/repo/books.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="223" column="1" lean-forward="true" selection-start-line="191" selection-end-line="223" selection-end-column="1" />
+          <folding>
+            <element signature="e#14#109#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server/db/repo/comments.go">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="36" column="61" selection-start-line="36" selection-start-column="61" selection-end-line="36" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/service/book.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="45" column="5" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="45" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/handler/bookHandlers/get_book_by_id_handler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="55" column="1" lean-forward="true" selection-start-line="12" selection-end-line="55" selection-end-column="1" />
+          <folding>
+            <element signature="e#22#116#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/service/comment.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="35" column="60" selection-start-line="35" selection-start-column="60" selection-end-line="35" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/add_comment_answer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="26" column="76" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="76" />
+          <folding>
+            <element signature="e#25#119#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/handler/commentHandlers/get_comment_by_id.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="28" column="76" selection-start-line="28" selection-start-column="76" selection-end-line="28" selection-end-column="76" />
+          <folding>
+            <element signature="e#25#108#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/root/run_app.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="93" column="37" selection-start-line="93" selection-start-column="37" selection-end-line="93" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/db/query/get_comment_by_id.go">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/db/query/get_book_by_id.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="15" lean-forward="true" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
         </state>
       </provider>
     </entry>

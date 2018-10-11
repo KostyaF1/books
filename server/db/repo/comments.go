@@ -21,12 +21,20 @@ type (
 		Author string `json:"author"`
 		Error  error  `json:"error"`
 	}
+
+	GetCommIDRepo struct {
+		Body   string `json:"body"`
+		Author string `json:"author"`
+		Answer string `json:"answer"`
+		Error  error  `json:"error"`
+	}
 )
 
 type Comments interface {
 	Add(ctx context.Context, coment dbo.Comment) (*AddCommentRepo, error)
 	AddAnswer(ctx context.Context, coment dbo.Comment) (*AddCommentRepo, error)
 	GetCommentsRepo(ctx context.Context, bookID int64) []*GetCommentsRepo
+	GetByID(ctx context.Context, commID int64) *GetCommIDRepo
 	Delete(ctx context.Context, id int64) error
 }
 
@@ -109,6 +117,30 @@ func (c *comments) GetCommentsRepo(ctx context.Context, bookID int64) []*GetComm
 	}
 
 	return comments
+}
+
+func (c *comments) GetByID(ctx context.Context, commID int64) *GetCommIDRepo {
+	dbConn := c.dbConn.Connect()
+	rows, err := dbConn.QueryContext(ctx, query.GetCommByID, commID)
+	if err != nil {
+		log.Println("Error when GetAll" + err.Error())
+	}
+
+	var (
+		body   string
+		author string
+		answer string
+	)
+
+	rows.Next()
+
+	rows.Scan(&body, &author, &answer)
+
+	return &GetCommIDRepo{
+		Body:   body,
+		Author: author,
+		Answer: answer,
+	}
 }
 
 func (c *comments) Delete(ctx context.Context, id int64) error {
