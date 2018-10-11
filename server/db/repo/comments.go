@@ -5,6 +5,7 @@ import (
 	"books/server/db/dbo"
 	"books/server/db/query"
 	"context"
+	"log"
 )
 
 type (
@@ -14,29 +15,36 @@ type (
 		Father int64  `json:"father"`
 		Error  error  `json:"error"`
 	}
+
+	GetCommentsRepo struct {
+		Body   string `json:"body"`
+		Author string `json:"author"`
+		Error  error  `json:"error"`
+	}
 )
 
-type Comment interface {
+type Comments interface {
 	Add(ctx context.Context, coment dbo.Comment) (*AddCommentRepo, error)
 	AddAnswer(ctx context.Context, coment dbo.Comment) (*AddCommentRepo, error)
+	GetCommentsRepo(ctx context.Context, bookID int64) []*GetCommentsRepo
 	Delete(ctx context.Context, id int64) error
 }
 
-type comment struct {
+type comments struct {
 	dbConn db.Connector
 }
 
-func NewComment() *comment {
-	return new(comment)
+func NewComments() *comments {
+	return new(comments)
 }
 
-var _ Comment = (*comment)(nil)
+var _ Comments = (*comments)(nil)
 
-func (c *comment) Inject(conn db.Connector) {
+func (c *comments) Inject(conn db.Connector) {
 	c.dbConn = conn
 }
 
-func (c *comment) Add(ctx context.Context, comment dbo.Comment) (*AddCommentRepo, error) {
+func (c *comments) Add(ctx context.Context, comment dbo.Comment) (*AddCommentRepo, error) {
 	dbConn := c.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
@@ -57,14 +65,53 @@ func (c *comment) Add(ctx context.Context, comment dbo.Comment) (*AddCommentRepo
 	}, tx.Commit()
 }
 
-func (c *comment) AddAnswer(ctx context.Context, comment dbo.Comment) (*AddCommentRepo, error) {
+func (c *comments) AddAnswer(ctx context.Context, comment dbo.Comment) (*AddCommentRepo, error) {
 	dbConn := c.dbConn.Connect()
-	dbConn.QueryContext(ctx, "Insert Into")
+	tx, err := dbConn.BeginTx(ctx, nil)
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+	var commentID int64
+
+	err = tx.QueryRowContext(ctx, query.AddCommentAnswer,
+		comment.BookID, comment.Body, comment.Author, comment.Father).Scan(&commentID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AddCommentRepo{
+		ID:     commentID,
+		Author: comment.Author,
+		Father: comment.Father,
+	}, tx.Commit()
 }
 
-func (c *comment) Delete(ctx context.Context, id int64) error {
+func (c *comments) GetCommentsRepo(ctx context.Context, bookID int64) []*GetCommentsRepo {
+	dbConn := c.dbConn.Connect()
+	rows, err := dbConn.QueryContext(ctx, query.GetComments, bookID)
+	if err != nil {
+		log.Println("Error when GetAll" + err.Error())
+	}
+
+	var comments []*GetCommentsRepo
+
+	for rows.Next() {
+		var (
+			body   string
+			author string
+		)
+		rows.Scan(&body, &author)
+		comments = append(comments, &GetCommentsRepo{
+			Body:   body,
+			Author: author,
+		})
+	}
+
+	return comments
+}
+
+func (c *comments) Delete(ctx context.Context, id int64) error {
 	dbConn := c.dbConn.Connect()
 	dbConn.QueryContext(ctx, "Insert Into")
 

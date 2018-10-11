@@ -41,7 +41,7 @@ func (a *App) Run() {
 	getBookIDHandler := bookHandlers.NewGetBookByID()
 	getBookIDHandler.Inject(book)
 
-	commentRepo := repo.NewComment()
+	commentRepo := repo.NewComments()
 	commentRepo.Inject(dbConn)
 
 	comment := service.NewAddComment()
@@ -49,6 +49,12 @@ func (a *App) Run() {
 
 	addCommentHandler := commentHandlers.NewAddComment()
 	addCommentHandler.Inject(comment)
+
+	addCommentAnswerHandler := commentHandlers.NewAddCommentAnswer()
+	addCommentAnswerHandler.Inject(comment)
+
+	getCommentsHandler := commentHandlers.NewGetCommentsHandler()
+	getCommentsHandler.Inject(comment)
 
 	router := mux.NewRouter()
 
@@ -71,6 +77,14 @@ func (a *App) Run() {
 	router.
 		Handle(addCommentHandler.Path(), addCommentHandler).
 		Methods(addCommentHandler.Method())
+
+	router.
+		Handle(addCommentAnswerHandler.Path(), addCommentAnswerHandler).
+		Methods(addCommentAnswerHandler.Method())
+
+	router.
+		Handle(getCommentsHandler.Path(), getCommentsHandler).
+		Methods(getCommentsHandler.Method())
 
 	server := http.Server{
 		Handler: router,

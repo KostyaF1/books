@@ -17,17 +17,23 @@ type (
 	AddCommentResp struct {
 		ID     int64  `json:"id"`
 		Author string `json:"author"`
-		Father string `json:"father"`
+		Father int64  `json:"father"`
 		Error  error
+	}
+
+	GetCommentsResp struct {
+		Comments []*repo.GetCommentsRepo `json:"comments"`
 	}
 )
 
 type Comment interface {
 	AddComment(ctx context.Context, req AddCommentReq) AddCommentResp
+	AddCommentAnswer(ctx context.Context, req AddCommentReq) AddCommentResp
+	GetComments(ctx context.Context, bookID int64) GetCommentsResp
 }
 
 type comment struct {
-	addComm repo.Comment
+	comments repo.Comments
 }
 
 func NewAddComment() *comment {
@@ -36,8 +42,8 @@ func NewAddComment() *comment {
 
 var _ Comment = (*comment)(nil)
 
-func (cs *comment) Inject(addComm repo.Comment) {
-	cs.addComm = addComm
+func (cs *comment) Inject(comm repo.Comments) {
+	cs.comments = comm
 }
 
 func (cs *comment) AddComment(ctx context.Context, req AddCommentReq) AddCommentResp {
@@ -46,7 +52,7 @@ func (cs *comment) AddComment(ctx context.Context, req AddCommentReq) AddComment
 		Author: req.Author,
 		Body:   req.Body,
 	}
-	resp, err := cs.addComm.Add(ctx, comment)
+	resp, err := cs.comments.Add(ctx, comment)
 	if err != nil {
 		return AddCommentResp{
 			Error: err,
@@ -56,5 +62,34 @@ func (cs *comment) AddComment(ctx context.Context, req AddCommentReq) AddComment
 	return AddCommentResp{
 		ID:     resp.ID,
 		Author: resp.Author,
+	}
+}
+
+func (cs *comment) AddCommentAnswer(ctx context.Context, req AddCommentReq) AddCommentResp {
+	comment := dbo.Comment{
+		BookID: req.BookID,
+		Author: req.Author,
+		Body:   req.Body,
+		Father: req.Father,
+	}
+	resp, err := cs.comments.AddAnswer(ctx, comment)
+	if err != nil {
+		return AddCommentResp{
+			Error: err,
+		}
+	}
+
+	return AddCommentResp{
+		ID:     resp.ID,
+		Author: resp.Author,
+		Father: resp.Father,
+	}
+}
+
+func (cs *comment) GetComments(ctx context.Context, bookID int64) GetCommentsResp {
+	comments := cs.comments.GetCommentsRepo(ctx, bookID)
+
+	return GetCommentsResp{
+		Comments: comments,
 	}
 }

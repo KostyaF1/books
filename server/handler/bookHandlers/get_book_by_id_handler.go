@@ -22,8 +22,8 @@ func (g *getBookByID) Inject(getBook service.Book) {
 	g.getBook = getBook
 }
 
-var _ http.Handler = (*deleteBook)(nil)
-var _ handler.Router = (*deleteBook)(nil)
+var _ http.Handler = (*getBookByID)(nil)
+var _ handler.Router = (*getBookByID)(nil)
 
 func (g *getBookByID) Path() (path string) {
 	return "/get_book_id/{id:[0-9]+}"
