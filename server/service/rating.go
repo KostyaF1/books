@@ -2,23 +2,13 @@ package service
 
 import (
 	"books/server/db/repo"
+	"books/server/service/request"
+	"books/server/service/response"
 	"context"
 )
 
-type (
-	RatingReq struct {
-		StoreUnitID int64 `json:"store_unit_id"`
-		Value       int   `json:"value"`
-	}
-
-	RatingResp struct {
-		ID    int64 `json:"id"`
-		Error error `json:"error"`
-	}
-)
-
 type Rating interface {
-	AddRating(ctx context.Context, req RatingReq) RatingResp
+	AddRating(ctx context.Context, req request.RatingReq) response.RatingResp
 }
 
 type rating struct {
@@ -35,15 +25,15 @@ func (r *rating) Inject(addRating repo.RatingRepo) {
 	r.addRating = addRating
 }
 
-func (r *rating) AddRating(ctx context.Context, req RatingReq) RatingResp {
+func (r *rating) AddRating(ctx context.Context, req request.RatingReq) response.RatingResp {
 	ratingID, err := r.addRating.Add(ctx, req.StoreUnitID, req.Value)
 
 	if err != nil {
-		return RatingResp{
+		return response.RatingResp{
 			Error: err,
 		}
 	}
-	return RatingResp{
+	return response.RatingResp{
 		ID: ratingID,
 	}
 }

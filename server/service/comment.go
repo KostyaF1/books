@@ -3,37 +3,16 @@ package service
 import (
 	"books/server/db/dbo"
 	"books/server/db/repo"
+	"books/server/service/request"
+	"books/server/service/response"
 	"context"
 )
 
-type (
-	AddCommentReq struct {
-		BookID int64  `json:"book_id"`
-		Body   string `json:"body"`
-		Author string `json:"author"`
-		Father int64  `json:"father"`
-	}
-
-	AddCommentResp struct {
-		ID     int64  `json:"id"`
-		Author string `json:"author"`
-		Father int64  `json:"father"`
-		Error  error
-	}
-
-	GetCommentsResp struct {
-		Comments []*repo.GetCommentsRepo `json:"comments"`
-	}
-	GetCommIDResp struct {
-		Comm *repo.GetCommIDRepo `json:"comm"`
-	}
-)
-
 type Comment interface {
-	AddComment(ctx context.Context, req AddCommentReq) AddCommentResp
-	AddCommentAnswer(ctx context.Context, req AddCommentReq) AddCommentResp
-	GetComments(ctx context.Context, bookID int64) GetCommentsResp
-	GetCommByID(ctx context.Context, id int64) GetCommIDResp
+	AddComment(ctx context.Context, req request.AddCommentReq) response.AddCommentResp
+	AddCommentAnswer(ctx context.Context, req request.AddCommentReq) response.AddCommentResp
+	GetComments(ctx context.Context, bookID int64) response.GetCommentsResp
+	GetCommByID(ctx context.Context, id int64) response.GetCommIDResp
 }
 
 type comment struct {
@@ -50,7 +29,7 @@ func (cs *comment) Inject(comm repo.Comments) {
 	cs.comments = comm
 }
 
-func (cs *comment) AddComment(ctx context.Context, req AddCommentReq) AddCommentResp {
+func (cs *comment) AddComment(ctx context.Context, req request.AddCommentReq) response.AddCommentResp {
 	comment := dbo.Comment{
 		BookID: req.BookID,
 		Author: req.Author,
@@ -58,18 +37,18 @@ func (cs *comment) AddComment(ctx context.Context, req AddCommentReq) AddComment
 	}
 	resp, err := cs.comments.Add(ctx, comment)
 	if err != nil {
-		return AddCommentResp{
+		return response.AddCommentResp{
 			Error: err,
 		}
 	}
 
-	return AddCommentResp{
+	return response.AddCommentResp{
 		ID:     resp.ID,
 		Author: resp.Author,
 	}
 }
 
-func (cs *comment) AddCommentAnswer(ctx context.Context, req AddCommentReq) AddCommentResp {
+func (cs *comment) AddCommentAnswer(ctx context.Context, req request.AddCommentReq) response.AddCommentResp {
 	comment := dbo.Comment{
 		BookID: req.BookID,
 		Author: req.Author,
@@ -78,30 +57,30 @@ func (cs *comment) AddCommentAnswer(ctx context.Context, req AddCommentReq) AddC
 	}
 	resp, err := cs.comments.AddAnswer(ctx, comment)
 	if err != nil {
-		return AddCommentResp{
+		return response.AddCommentResp{
 			Error: err,
 		}
 	}
 
-	return AddCommentResp{
+	return response.AddCommentResp{
 		ID:     resp.ID,
 		Author: resp.Author,
 		Father: resp.Father,
 	}
 }
 
-func (cs *comment) GetComments(ctx context.Context, bookID int64) GetCommentsResp {
+func (cs *comment) GetComments(ctx context.Context, bookID int64) response.GetCommentsResp {
 	comments := cs.comments.GetCommentsRepo(ctx, bookID)
 
-	return GetCommentsResp{
+	return response.GetCommentsResp{
 		Comments: comments,
 	}
 }
 
-func (c *comment) GetCommByID(ctx context.Context, id int64) GetCommIDResp {
+func (c *comment) GetCommByID(ctx context.Context, id int64) response.GetCommIDResp {
 	comment := c.comments.GetByID(ctx, id)
 
-	return GetCommIDResp{
+	return response.GetCommIDResp{
 		Comm: comment,
 	}
 }

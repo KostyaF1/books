@@ -3,54 +3,16 @@ package service
 import (
 	"books/server/db/dbo"
 	"books/server/db/repo"
+	"books/server/service/request"
+	"books/server/service/response"
 	"context"
 )
 
-type (
-	CreateBookReq struct {
-		ID            int64  `json:"id"`
-		Name          string `json:"name"`
-		Genre         string `json:"genre"`
-		BookType      string `json:"book_type"`
-		PageCount     int    `json:"page_count"`
-		AuthorName    string `json:"author_name"`
-		AuthorSurname string `json:"author_surname"`
-		Price         int    `json:"price"`
-	}
-	CreateBookResp struct {
-		ID            int64  `json:"id"`
-		Name          string `json:"name"`
-		Genre         string `json:"genre"`
-		BookType      string `json:"book_type"`
-		PageCount     int    `json:"page_count"`
-		AuthorName    string `json:"author_name"`
-		AuthorSurname string `json:"author_surname"`
-		Price         int    `json:"price"`
-		Error         error  `json:"error"`
-	}
-
-	DeleteBookReq struct {
-		ID int64 `json:"id"`
-	}
-	DeleteBookResp struct {
-		ID    int64  `json:"id"`
-		Name  string `json:"name"`
-		Error error  `json:"error"`
-	}
-
-	GetBookResp struct {
-		AllBooks []*repo.GetBookRepo `json:"all_books"`
-	}
-	GetBookIDResp struct {
-		Book *repo.GetBookIDRepo `json:"book"`
-	}
-)
-
 type Book interface {
-	CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
-	DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp
-	GetAllBooks(ctx context.Context) GetBookResp
-	GetBookByID(ctx context.Context, id int64) GetBookIDResp
+	CreateBook(ctx context.Context, req request.CreateBookReq) response.CreateBookResp
+	DeleteBook(ctx context.Context, req request.DeleteBookReq) response.DeleteBookResp
+	GetAllBooks(ctx context.Context) response.GetBookResp
+	GetBookByID(ctx context.Context, id int64) response.GetBookIDResp
 }
 
 //book ...
@@ -68,7 +30,7 @@ func (b *book) Inject(books repo.Books) {
 	b.books = books
 }
 
-func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp {
+func (b *book) CreateBook(ctx context.Context, req request.CreateBookReq) response.CreateBookResp {
 	book := dbo.Book{
 		Name:          req.Name,
 		Genre:         req.Genre,
@@ -81,11 +43,11 @@ func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 
 	bookResp, err := b.books.Create(ctx, book)
 	if err != nil {
-		return CreateBookResp{
+		return response.CreateBookResp{
 			Error: err,
 		}
 	}
-	return CreateBookResp{
+	return response.CreateBookResp{
 		ID:            bookResp.ID,
 		Name:          bookResp.Name,
 		Genre:         bookResp.Genre,
@@ -98,35 +60,39 @@ func (b *book) CreateBook(ctx context.Context, req CreateBookReq) CreateBookResp
 	}
 }
 
-func (b *book) DeleteBook(ctx context.Context, req DeleteBookReq) DeleteBookResp {
+func (b *book) DeleteBook(ctx context.Context, req request.DeleteBookReq) response.DeleteBookResp {
 	book := dbo.Book{
 		ID: req.ID,
 	}
 
 	d_id, d_name, err := b.books.Delete(ctx, book.ID)
 	if err != nil {
-		return DeleteBookResp{
+		return response.DeleteBookResp{
 			Error: err,
 		}
 	}
-	return DeleteBookResp{
+	return response.DeleteBookResp{
 		ID:   d_id,
 		Name: d_name,
 	}
 }
 
-func (b *book) GetAllBooks(ctx context.Context) GetBookResp {
-	allBooks := b.books.GetAll(ctx)
-
-	return GetBookResp{
+func (b *book) GetAllBooks(ctx context.Context) response.GetBookResp {
+	allBooks, err := b.books.GetAll(ctx)
+	if err != nil {
+		return response.GetBookResp{
+			Error: err,
+		}
+	}
+	return response.GetBookResp{
 		AllBooks: allBooks,
 	}
 }
 
-func (b *book) GetBookByID(ctx context.Context, id int64) GetBookIDResp {
+func (b *book) GetBookByID(ctx context.Context, id int64) response.GetBookIDResp {
 	Book := b.books.GetByID(ctx, id)
 
-	return GetBookIDResp{
+	return response.GetBookIDResp{
 		Book: Book,
 	}
 }

@@ -3,36 +3,37 @@ package ratingHandler
 import (
 	"books/server/handler"
 	"books/server/service"
+	"books/server/service/request"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-type addRating struct {
-	addRating service.Rating
+type add struct {
+	service service.Rating
 }
 
-func NewAddRating() *addRating {
-	return new(addRating)
+func NewAddRating() *add {
+	return new(add)
 }
 
-func (ar *addRating) Inject(rating service.Rating) {
-	ar.addRating = rating
+func (a *add) Inject(rating service.Rating) {
+	a.service = rating
 }
 
-var _ http.Handler = (*addRating)(nil)
-var _ handler.Router = (*addRating)(nil)
+var _ http.Handler = (*add)(nil)
+var _ handler.Router = (*add)(nil)
 
-func (*addRating) Path() (path string) {
+func (*add) Path() (path string) {
 	return "/get_book_id/{id:[0-9]+}/add_rating"
 }
 
-func (*addRating) Method() (method string) {
+func (*add) Method() (method string) {
 	return http.MethodPost
 }
 
-func (ar *addRating) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addRating service.RatingReq
+func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var addRating request.RatingReq
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -42,7 +43,7 @@ func (ar *addRating) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := ar.addRating.AddRating(ctx, addRating)
+	response := a.service.AddRating(ctx, addRating)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

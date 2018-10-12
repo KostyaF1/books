@@ -3,36 +3,37 @@ package commentHandlers
 import (
 	"books/server/handler"
 	"books/server/service"
+	"books/server/service/request"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-type addComment struct {
-	addComment service.Comment
+type add struct {
+	service service.Comment
 }
 
-func NewAddComment() *addComment {
-	return new(addComment)
+func NewAddComment() *add {
+	return new(add)
 }
 
-func (ac *addComment) Inject(newComment service.Comment) {
-	ac.addComment = newComment
+func (a *add) Inject(newComment service.Comment) {
+	a.service = newComment
 }
 
-var _ http.Handler = (*addComment)(nil)
-var _ handler.Router = (*addComment)(nil)
+var _ http.Handler = (*add)(nil)
+var _ handler.Router = (*add)(nil)
 
-func (*addComment) Path() (path string) {
+func (*add) Path() (path string) {
 	return "/get_book_id/{id:[0-9]+}/add_comment"
 }
 
-func (*addComment) Method() (method string) {
+func (*add) Method() (method string) {
 	return http.MethodPost
 }
 
-func (ac *addComment) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addNewComment service.AddCommentReq
+func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var addNewComment request.AddCommentReq
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -42,7 +43,7 @@ func (ac *addComment) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := ac.addComment.AddComment(ctx, addNewComment)
+	response := a.service.AddComment(ctx, addNewComment)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

@@ -4,7 +4,7 @@ import (
 	"books/server/conf"
 	"books/server/db"
 	"books/server/db/repo"
-	"books/server/handler/bookHandlers"
+	"books/server/handler/bookHandler"
 	"books/server/handler/commentHandlers"
 	"books/server/handler/ratingHandler"
 	"books/server/service"
@@ -30,16 +30,16 @@ func (a *App) Run() {
 	book := service.NewBook()
 	book.Inject(booksRepo)
 
-	createBookHandler := bookHandlers.NewCreateBook()
+	createBookHandler := bookHandler.NewCreate()
 	createBookHandler.Inject(book)
 
-	deleteBookHandler := bookHandlers.NewDeleteBook()
+	deleteBookHandler := bookHandler.NewDeleteBook()
 	deleteBookHandler.Inject(book)
 
-	getAllBooksHandler := bookHandlers.NewGetAllBooks()
+	getAllBooksHandler := bookHandler.NewGetAllBooks()
 	getAllBooksHandler.Inject(book)
 
-	getBookIDHandler := bookHandlers.NewGetBookByID()
+	getBookIDHandler := bookHandler.NewGetBookByID()
 	getBookIDHandler.Inject(book)
 
 	commentRepo := repo.NewComments()

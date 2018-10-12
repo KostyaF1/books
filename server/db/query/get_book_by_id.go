@@ -1,22 +1,24 @@
 package query
 
-const GetBookByID = `SELECT id,
-       (SELECT name FROM book_products),
+const GetBookByID = `
+SELECT store_units.id ,
+      book_products.name AS book_name,
        array(SELECT genres.name
              FROM genres
              WHERE genres.id IN
                    (SELECT product_genres.genre_id
                     FROM product_genres
                     WHERE product_genres.book_product_id = store_units.book_product_id)) AS genre,
-       (SELECT product_types.name FROM product_types WHERE id IN
-                                                           (SELECT type FROM book_products)) AS type,
-       (SELECT page_count FROM book_products),
+       product_types.name AS product_type,
+       book_products.page_count AS page_count,
        array(SELECT authors.first_name || ' ' || authors.last_name
              FROM authors
              WHERE authors.id IN (SELECT author_products.author_id
                                   FROM author_products
                                   WHERE author_products.book_product_id = store_units.book_product_id)) AS author,
-       price,
-       array(SELECT body || '-author:' || author FROM coments) AS comments
+       price AS price,
+       (SELECT AVG(value) FROM rating WHERE store_unit_id = store_units.id AND store_units.book_product_id = book_products.id) AS value
 FROM store_units
-WHERE id = $1;`
+INNER JOIN book_products on store_units.book_product_id = book_products.id
+INNER JOIN product_types ON book_products.type = product_types.id
+WHERE store_units.id = $1;`

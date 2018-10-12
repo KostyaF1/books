@@ -10,30 +10,30 @@ import (
 	"strconv"
 )
 
-type getCommentByID struct {
-	getComment service.Comment
+type getByID struct {
+	service service.Comment
 }
 
-func NewGetCommentByID() *getCommentByID {
-	return new(getCommentByID)
+func NewGetCommentByID() *getByID {
+	return new(getByID)
 }
 
-func (g *getCommentByID) Inject(getComm service.Comment) {
-	g.getComment = getComm
+func (g *getByID) Inject(getComm service.Comment) {
+	g.service = getComm
 }
 
-var _ http.Handler = (*getCommentByID)(nil)
-var _ handler.Router = (*getCommentByID)(nil)
+var _ http.Handler = (*getByID)(nil)
+var _ handler.Router = (*getByID)(nil)
 
-func (g *getCommentByID) Path() (path string) {
+func (*getByID) Path() (path string) {
 	return "/get_book_id/{id:[0-9]+}/get_comments/get_comment_id/{id:[0-9]+}"
 }
 
-func (g *getCommentByID) Method() (method string) {
+func (*getByID) Method() (method string) {
 	return http.MethodGet
 }
 
-func (g *getCommentByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (g *getByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	vars := mux.Vars(r)
@@ -46,7 +46,7 @@ func (g *getCommentByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := g.getComment.GetCommByID(ctx, id64)
+	response := g.service.GetCommByID(ctx, id64)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

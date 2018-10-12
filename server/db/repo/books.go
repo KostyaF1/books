@@ -5,47 +5,14 @@ import (
 	"books/server/db/dbo"
 	"books/server/db/query"
 	"context"
-	"log"
-)
-
-type (
-	CreateBookRepo struct {
-		ID            int64  `json:"id"`
-		Name          string `json:"name"`
-		Genre         string `json:"genre"`
-		BookType      string `json:"book_type"`
-		PageCount     int    `json:"page_count"`
-		AuthorName    string `json:"author_name"`
-		AuthorSurname string `json:"author_surname"`
-		Price         int    `json:"price"`
-	}
-
-	GetBookRepo struct {
-		ID        int64  `json:"id"`
-		Name      string `json:"name"`
-		Genre     string `json:"genre"`
-		BookType  string `json:"book_type"`
-		PageCount int    `json:"page_count"`
-		Author    string `json:"author"`
-		Price     int    `json:"price"`
-	}
-	GetBookIDRepo struct {
-		ID        int64  `json:"id"`
-		Name      string `json:"name"`
-		Genre     string `json:"genre"`
-		BookType  string `json:"book_type"`
-		PageCount int    `json:"page_count"`
-		Author    string `json:"author"`
-		Price     int    `json:"price"`
-		Comments  string `json:"comments"`
-	}
+	"fmt"
 )
 
 type Books interface {
-	Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error)
+	Create(ctx context.Context, book dbo.Book) (*dbo.CreateBookRepo, error)
 	Delete(ctx context.Context, id int64) (int64, string, error)
-	GetAll(ctx context.Context) []*GetBookRepo
-	GetByID(ctx context.Context, bookID int64) *GetBookIDRepo
+	GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error)
+	GetByID(ctx context.Context, bookID int64) *dbo.GetBookIDRepo
 }
 
 //books...
@@ -63,7 +30,7 @@ func (b *books) Inject(conn db.Connector) {
 	b.dbConn = conn
 }
 
-func (b *books) Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, error) {
+func (b *books) Create(ctx context.Context, book dbo.Book) (*dbo.CreateBookRepo, error) {
 	dbConn := b.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
@@ -121,7 +88,7 @@ func (b *books) Create(ctx context.Context, book dbo.Book) (*CreateBookRepo, err
 		return nil, err
 	}
 
-	return &CreateBookRepo{
+	return &dbo.CreateBookRepo{
 		ID:            storeUnit,
 		Name:          book.Name,
 		Genre:         book.Genre,
@@ -156,69 +123,65 @@ func (b *books) Delete(ctx context.Context, id int64) (int64, string, error) {
 }
 
 //GetAllUnits ...
-func (b *books) GetAll(ctx context.Context) []*GetBookRepo {
+func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error) {
 	dbConn := b.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetAllUnitsQuerie)
 	if err != nil {
-		log.Println("Error when GetAll" + err.Error())
+		return nil, err
 	}
 
-	var allBooks []*GetBookRepo
+	var allBooks []*dbo.GetBookRepo
 
 	for rows.Next() {
-		var (
-			id        int64
-			bookName  string
-			genre     string
-			bookType  string
-			pageCount int
-			author    string
-			price     int
-		)
-		rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author, &price)
-		allBooks = append(allBooks, &GetBookRepo{
-			ID:        id,
-			Name:      bookName,
-			Genre:     genre,
-			BookType:  bookType,
-			PageCount: pageCount,
-			Author:    author,
-			Price:     price,
-		})
+		var book dbo.GetBookRepo
+
+		if err = rows.Scan(
+			&book.ID,
+			&book.Name,
+			&book.Genre,
+			&book.BookType,
+			&book.PageCount,
+			&book.Author,
+			&book.Price,
+			&book.Value,
+		); err != nil {
+			return nil, err
+		}
+
+		allBooks = append(allBooks, &book)
 	}
-	return allBooks
+	return allBooks, nil
 }
 
-func (b *books) GetByID(ctx context.Context, bookID int64) *GetBookIDRepo {
+func (b *books) GetByID(ctx context.Context, bookID int64) *dbo.GetBookIDRepo {
 	dbConn := b.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetBookByID, bookID)
 	if err != nil {
-		log.Println("Error when GetAll" + err.Error())
+		return &dbo.GetBookIDRepo{
+			Error: err,
+		}
 	}
-
-	var (
-		id        int64
-		bookName  string
-		genre     string
-		bookType  string
-		pageCount int
-		author    string
-		price     int
-		comments  string
-	)
 
 	rows.Next()
 
-	rows.Scan(&id, &bookName, &genre, &bookType, &pageCount, &author, &price, &comments)
+	var book dbo.GetBookIDRepo
 
-	return &GetBookIDRepo{
-		ID:        id,
-		Name:      bookName,
-		Genre:     genre,
-		BookType:  bookType,
-		PageCount: pageCount,
-		Author:    author,
-		Price:     price,
-		Comments:  comments,
+	if err = rows.Scan(
+		&book.ID,
+		&book.BookName,
+		&book.Genre,
+		&book.BookType,
+		&book.PageCount,
+		&book.Author,
+		&book.Price,
+		//&book.Comments,
+		&book.Value,
+	); err != nil {
+		fmt.Println(err)
+		return &dbo.GetBookIDRepo{
+			Error: err,
+		}
 	}
+
+	return &book
 }
