@@ -23,10 +23,9 @@ type (
 	}
 
 	GetCommIDRepo struct {
-		Body   string `json:"body"`
-		Author string `json:"author"`
-		Answer string `json:"answer"`
-		Error  error  `json:"error"`
+		Comment string `json:"comment"`
+		Answer  string `json:"answer"`
+		Error   error  `json:"error"`
 	}
 )
 
@@ -127,19 +126,17 @@ func (c *comments) GetByID(ctx context.Context, commID int64) *GetCommIDRepo {
 	}
 
 	var (
-		body   string
-		author string
-		answer string
+		comment string
+		answer  string
 	)
 
 	rows.Next()
 
-	rows.Scan(&body, &author, &answer)
+	rows.Scan(&comment, &answer)
 
 	return &GetCommIDRepo{
-		Body:   body,
-		Author: author,
-		Answer: answer,
+		Comment: comment,
+		Answer:  answer,
 	}
 }
 

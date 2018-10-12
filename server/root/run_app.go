@@ -6,6 +6,7 @@ import (
 	"books/server/db/repo"
 	"books/server/handler/bookHandlers"
 	"books/server/handler/commentHandlers"
+	"books/server/handler/ratingHandler"
 	"books/server/service"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -59,6 +60,15 @@ func (a *App) Run() {
 	getCommentByIDHandler := commentHandlers.NewGetCommentByID()
 	getCommentByIDHandler.Inject(comment)
 
+	ratingRepo := repo.NewRating()
+	ratingRepo.Inject(dbConn)
+
+	rating := service.NewRating()
+	rating.Inject(ratingRepo)
+
+	addRatingHandler := ratingHandler.NewAddRating()
+	addRatingHandler.Inject(rating)
+
 	router := mux.NewRouter()
 
 	router.
@@ -92,6 +102,10 @@ func (a *App) Run() {
 	router.
 		Handle(getCommentByIDHandler.Path(), getCommentByIDHandler).
 		Methods(getCommentByIDHandler.Method())
+
+	router.
+		Handle(addRatingHandler.Path(), addRatingHandler).
+		Methods(addRatingHandler.Method())
 
 	server := http.Server{
 		Handler: router,

@@ -16,15 +16,15 @@ func NewAddComment() *addComment {
 	return new(addComment)
 }
 
-func (ac *addComment) Inject(newBook service.Comment) {
-	ac.addComment = newBook
+func (ac *addComment) Inject(newComment service.Comment) {
+	ac.addComment = newComment
 }
 
 var _ http.Handler = (*addComment)(nil)
 var _ handler.Router = (*addComment)(nil)
 
 func (*addComment) Path() (path string) {
-	return "/add_comment"
+	return "/get_book_id/{id:[0-9]+}/add_comment"
 }
 
 func (*addComment) Method() (method string) {
