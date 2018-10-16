@@ -4,21 +4,23 @@ import (
 	"books/server/conf"
 	"books/server/db"
 	"books/server/db/repo"
+	"books/server/handler"
 	"books/server/handler/bookHandler"
-	"books/server/handler/commentHandlers"
-	"books/server/handler/ratingHandler"
+	"books/server/handler/comment_handler"
 	"books/server/service"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
 )
 
 type App struct {
 }
 
 func (a *App) Run() {
+
 	config := conf.Config{
-		Driver: "postgres",
-		DBUrl:  "postgres://postgres:1111@localhost/books",
+		Driver: os.Getenv("DRIVER"),
+		DBUrl:  os.Getenv("DBURL"),
 	}
 
 	dbConn := db.NewConn()
@@ -48,16 +50,16 @@ func (a *App) Run() {
 	comment := service.NewAddComment()
 	comment.Inject(commentRepo)
 
-	addCommentHandler := commentHandlers.NewAddComment()
+	addCommentHandler := comment_handler.NewAddComment()
 	addCommentHandler.Inject(comment)
 
-	addCommentAnswerHandler := commentHandlers.NewAddCommentAnswer()
+	addCommentAnswerHandler := comment_handler.NewAddCommentAnswer()
 	addCommentAnswerHandler.Inject(comment)
 
-	getCommentsHandler := commentHandlers.NewGetCommentsHandler()
+	getCommentsHandler := comment_handler.NewGetCommentsHandler()
 	getCommentsHandler.Inject(comment)
 
-	getCommentByIDHandler := commentHandlers.NewGetCommentByID()
+	getCommentByIDHandler := comment_handler.NewGetCommentByID()
 	getCommentByIDHandler.Inject(comment)
 
 	ratingRepo := repo.NewRating()
@@ -66,7 +68,7 @@ func (a *App) Run() {
 	rating := service.NewRating()
 	rating.Inject(ratingRepo)
 
-	addRatingHandler := ratingHandler.NewAddRating()
+	addRatingHandler := handler.NewAddRating()
 	addRatingHandler.Inject(rating)
 
 	router := mux.NewRouter()

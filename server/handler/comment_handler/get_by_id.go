@@ -1,4 +1,4 @@
-package commentHandlers
+package comment_handler
 
 import (
 	"books/server/handler"
@@ -10,35 +10,34 @@ import (
 	"strconv"
 )
 
-type getAll struct {
+type getByID struct {
 	service service.Comment
 }
 
-func NewGetCommentsHandler() *getAll {
-	return new(getAll)
+func NewGetCommentByID() *getByID {
+	return new(getByID)
 }
 
-func (g *getAll) Inject(getComments service.Comment) {
-	g.service = getComments
+func (g *getByID) Inject(getComm service.Comment) {
+	g.service = getComm
 }
 
-var _ http.Handler = (*getAll)(nil)
-var _ handler.Router = (*getAll)(nil)
+var _ http.Handler = (*getByID)(nil)
+var _ handler.Router = (*getByID)(nil)
 
-func (*getAll) Path() (path string) {
-	return "/get_book_id/{id:[0-9]+}/get_comments"
+func (*getByID) Path() (path string) {
+	return "/get_book_id/{id:[0-9]+}/get_comments/get_comment_id/{id:[0-9]+}"
 }
 
-func (*getAll) Method() (method string) {
+func (*getByID) Method() (method string) {
 	return http.MethodGet
 }
 
-func (g *getAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (g *getByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	vars := mux.Vars(r)
 	id := vars["id"]
-
 	id64, err := strconv.ParseInt(id, 10, 64)
 
 	if err != nil {
@@ -47,7 +46,7 @@ func (g *getAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := g.service.GetComments(ctx, id64)
+	response := g.service.GetCommByID(ctx, id64)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

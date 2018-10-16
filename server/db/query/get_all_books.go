@@ -17,8 +17,8 @@ SELECT store_units.id ,
                                   FROM author_products
                                   WHERE author_products.book_product_id = store_units.book_product_id)) AS author,
        price AS price,
-       (SELECT AVG(value) FROM rating 
+       (SELECT AVG(value) FROM rating
 		WHERE store_unit_id = store_units.id AND store_units.book_product_id = book_products.id) AS value
 FROM store_units
-INNER JOIN book_products on store_units.book_product_id = book_products.id
-INNER JOIN product_types ON book_products.type = product_types.id;`
+INNER JOIN book_products ON store_units.book_product_id = book_products.id
+INNER JOIN product_types ON book_products.type = product_types.id;;`

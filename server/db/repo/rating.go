@@ -6,39 +6,34 @@ import (
 	"context"
 )
 
-type RatingRepo interface {
-	Add(ctx context.Context, bookID int64, value int) (int64, error)
+type Ratings interface {
+	Add(ctx context.Context, bookID int64, value int) error
 }
 
-type ratingRepo struct {
+type ratings struct {
 	dbConn db.Connector
 }
 
-func NewRating() *ratingRepo {
-	return new(ratingRepo)
+func NewRating() *ratings {
+	return new(ratings)
 }
 
-var _ RatingRepo = (*ratingRepo)(nil)
+var _ Ratings = (*ratings)(nil)
 
-func (r *ratingRepo) Inject(conn db.Connector) {
+func (r *ratings) Inject(conn db.Connector) {
 	r.dbConn = conn
 }
 
-func (r *ratingRepo) Add(ctx context.Context, bookID int64, value int) (int64, error) {
+func (r *ratings) Add(ctx context.Context, bookID int64, value int) error {
 	dbConn := r.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
-	if err != nil {
-		return 0, err
-	}
-
-	var ratingID int64
-
-	err = tx.QueryRowContext(ctx, query.AddRating, bookID, value).Scan(&ratingID)
+	_, err = tx.ExecContext(ctx, query.AddRating, bookID, value)
 
 	if err != nil {
-		return 0, err
+		tx.Rollback()
+		return err
 	}
 
-	return ratingID, tx.Commit()
+	return tx.Commit()
 }

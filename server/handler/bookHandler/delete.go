@@ -4,8 +4,6 @@ import (
 	"books/server/handler"
 	"books/server/service"
 	"books/server/service/request"
-	"books/server/service/response"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -34,12 +32,6 @@ func (*delete) Method() (method string) {
 	return http.MethodPost
 }
 
-func (d *delete) delete(ctx context.Context, req request.DeleteBookReq) response.DeleteBookResp {
-	delBook := d.service.DeleteBook(ctx, req)
-
-	return delBook
-}
-
 func (d *delete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var bookReq request.DeleteBookReq
 	defer r.Body.Close()
@@ -51,7 +43,7 @@ func (d *delete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := d.delete(ctx, bookReq)
+	resp := d.service.DeleteBook(ctx, bookReq)
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

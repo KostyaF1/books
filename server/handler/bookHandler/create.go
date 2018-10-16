@@ -35,6 +35,7 @@ func (*create) Method() (method string) {
 }
 
 func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
 	var bookReq request.CreateBookReq
 	defer r.Body.Close()
 	ctx := r.Context()

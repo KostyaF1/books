@@ -12,7 +12,7 @@ type Rating interface {
 }
 
 type rating struct {
-	addRating repo.RatingRepo
+	addRating repo.Ratings
 }
 
 func NewRating() *rating {
@@ -21,12 +21,12 @@ func NewRating() *rating {
 
 var _ Rating = (*rating)(nil)
 
-func (r *rating) Inject(addRating repo.RatingRepo) {
+func (r *rating) Inject(addRating repo.Ratings) {
 	r.addRating = addRating
 }
 
 func (r *rating) AddRating(ctx context.Context, req request.RatingReq) response.RatingResp {
-	ratingID, err := r.addRating.Add(ctx, req.StoreUnitID, req.Value)
+	err := r.addRating.Add(ctx, req.StoreUnitID, req.Value)
 
 	if err != nil {
 		return response.RatingResp{
@@ -34,6 +34,6 @@ func (r *rating) AddRating(ctx context.Context, req request.RatingReq) response.
 		}
 	}
 	return response.RatingResp{
-		ID: ratingID,
+		Error: nil,
 	}
 }

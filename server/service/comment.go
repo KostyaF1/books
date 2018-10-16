@@ -35,16 +35,10 @@ func (cs *comment) AddComment(ctx context.Context, req request.AddCommentReq) re
 		Author: req.Author,
 		Body:   req.Body,
 	}
-	resp, err := cs.comments.Add(ctx, comment)
-	if err != nil {
-		return response.AddCommentResp{
-			Error: err,
-		}
-	}
+	err := cs.comments.Add(ctx, comment)
 
 	return response.AddCommentResp{
-		ID:     resp.ID,
-		Author: resp.Author,
+		Error: err,
 	}
 }
 
@@ -55,22 +49,21 @@ func (cs *comment) AddCommentAnswer(ctx context.Context, req request.AddCommentR
 		Body:   req.Body,
 		Father: req.Father,
 	}
-	resp, err := cs.comments.AddAnswer(ctx, comment)
-	if err != nil {
-		return response.AddCommentResp{
-			Error: err,
-		}
-	}
+	err := cs.comments.AddAnswer(ctx, comment)
 
 	return response.AddCommentResp{
-		ID:     resp.ID,
-		Author: resp.Author,
-		Father: resp.Father,
+		Error: err,
 	}
 }
 
 func (cs *comment) GetComments(ctx context.Context, bookID int64) response.GetCommentsResp {
-	comments := cs.comments.GetCommentsRepo(ctx, bookID)
+	comments, err := cs.comments.GetCommentsRepo(ctx, bookID)
+
+	if err != nil {
+		return response.GetCommentsResp{
+			Error: err,
+		}
+	}
 
 	return response.GetCommentsResp{
 		Comments: comments,
@@ -78,8 +71,13 @@ func (cs *comment) GetComments(ctx context.Context, bookID int64) response.GetCo
 }
 
 func (c *comment) GetCommByID(ctx context.Context, id int64) response.GetCommIDResp {
-	comment := c.comments.GetByID(ctx, id)
+	comment, err := c.comments.GetByID(ctx, id)
 
+	if err != nil {
+		return response.GetCommIDResp{
+			Error: err,
+		}
+	}
 	return response.GetCommIDResp{
 		Comm: comment,
 	}

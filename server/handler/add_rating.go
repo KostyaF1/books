@@ -1,7 +1,6 @@
-package commentHandlers
+package handler
 
 import (
-	"books/server/handler"
 	"books/server/service"
 	"books/server/service/request"
 	"encoding/json"
@@ -10,22 +9,22 @@ import (
 )
 
 type add struct {
-	service service.Comment
+	service service.Rating
 }
 
-func NewAddComment() *add {
+func NewAddRating() *add {
 	return new(add)
 }
 
-func (a *add) Inject(newComment service.Comment) {
-	a.service = newComment
+func (a *add) Inject(rating service.Rating) {
+	a.service = rating
 }
 
 var _ http.Handler = (*add)(nil)
-var _ handler.Router = (*add)(nil)
+var _ Router = (*add)(nil)
 
 func (*add) Path() (path string) {
-	return "/get_book_id/{id:[0-9]+}/add_comment"
+	return "/get_book_id/{id:[0-9]+}/add_rating"
 }
 
 func (*add) Method() (method string) {
@@ -33,17 +32,17 @@ func (*add) Method() (method string) {
 }
 
 func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addNewComment request.AddCommentReq
+	var addRating request.RatingReq
 	defer r.Body.Close()
 	ctx := r.Context()
 
-	if err := json.NewDecoder(r.Body).Decode(&addNewComment); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&addRating); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	response := a.service.AddComment(ctx, addNewComment)
+	response := a.service.AddRating(ctx, addRating)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

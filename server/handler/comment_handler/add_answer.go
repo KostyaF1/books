@@ -1,4 +1,4 @@
-package commentHandlers
+package comment_handler
 
 import (
 	"books/server/handler"

@@ -5,14 +5,13 @@ import (
 	"books/server/db/dbo"
 	"books/server/db/query"
 	"context"
-	"fmt"
 )
 
 type Books interface {
-	Create(ctx context.Context, book dbo.Book) (*dbo.CreateBookRepo, error)
-	Delete(ctx context.Context, id int64) (int64, string, error)
+	Create(ctx context.Context, book *dbo.Book) error
+	Delete(ctx context.Context, id int64) error
 	GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error)
-	GetByID(ctx context.Context, bookID int64) *dbo.GetBookIDRepo
+	GetByID(ctx context.Context, bookID int64) (*dbo.GetBookIDRepo, error)
 }
 
 //books...
@@ -30,13 +29,10 @@ func (b *books) Inject(conn db.Connector) {
 	b.dbConn = conn
 }
 
-func (b *books) Create(ctx context.Context, book dbo.Book) (*dbo.CreateBookRepo, error) {
+// only error
+func (b *books) Create(ctx context.Context, book *dbo.Book) error {
 	dbConn := b.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
-
-	if err != nil {
-		return nil, err
-	}
 
 	var bookID int64
 	err = tx.QueryRowContext(
@@ -45,68 +41,42 @@ func (b *books) Create(ctx context.Context, book dbo.Book) (*dbo.CreateBookRepo,
 		book.Name, book.PageCount, book.BookType,
 	).Scan(&bookID)
 
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
 	var authorID int64
 
 	err = tx.QueryRowContext(ctx,
 		query.CreateAuthor,
 		book.AuthorName, book.AuthorSurname).Scan(&authorID)
 
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
 	_, err = tx.ExecContext(ctx,
 		query.AuthorBook, bookID, authorID)
 	if err != nil {
 		tx.Rollback()
-		return nil, err
+		return err
 	}
 
 	_, err = tx.ExecContext(ctx,
 		query.GenreBook,
 		bookID, book.Genre)
 
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	var storeUnit int64
-
-	err = tx.QueryRowContext(ctx,
+	_, err = tx.ExecContext(ctx,
 		query.StoreUnit,
-		bookID, book.Price).Scan(&storeUnit)
+		bookID, book.Price)
 
 	if err != nil {
 		tx.Rollback()
-		return nil, err
+		return err
 	}
 
-	return &dbo.CreateBookRepo{
-		ID:            storeUnit,
-		Name:          book.Name,
-		Genre:         book.Genre,
-		BookType:      book.BookType,
-		PageCount:     book.PageCount,
-		AuthorName:    book.AuthorName,
-		AuthorSurname: book.AuthorSurname,
-	}, tx.Commit()
+	return tx.Commit()
 
 }
 
-func (b *books) Delete(ctx context.Context, id int64) (int64, string, error) {
+// named parameters
+// error
+func (b *books) Delete(ctx context.Context, id int64) error {
 	dbConn := b.dbConn.Connect()
 
 	row, err := dbConn.QueryContext(ctx, "SELECT name FROM book_products WHERE id=$1", id)
-	if err != nil {
-		return 0, "", err
-	}
 	row.Next()
 	var name string
 	row.Scan(&name)
@@ -114,15 +84,13 @@ func (b *books) Delete(ctx context.Context, id int64) (int64, string, error) {
 	_, err = dbConn.ExecContext(ctx, query.DeleteBookByID, id)
 
 	if err != nil {
-		return 0, "", err
+		return err
 	}
 
-	//res.
-
-	return id, name, err
+	return nil
 }
 
-//GetAllUnits ...
+// naming
 func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error) {
 	dbConn := b.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetAllUnitsQuerie)
@@ -137,7 +105,7 @@ func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error) {
 
 		if err = rows.Scan(
 			&book.ID,
-			&book.Name,
+			//&book.Name,
 			&book.Genre,
 			&book.BookType,
 			&book.PageCount,
@@ -153,14 +121,13 @@ func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBookRepo, error) {
 	return allBooks, nil
 }
 
-func (b *books) GetByID(ctx context.Context, bookID int64) *dbo.GetBookIDRepo {
+// return err
+func (b *books) GetByID(ctx context.Context, bookID int64) (*dbo.GetBookIDRepo, error) {
 	dbConn := b.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetBookByID, bookID)
-	if err != nil {
-		return &dbo.GetBookIDRepo{
-			Error: err,
-		}
-	}
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	rows.Next()
 
@@ -174,14 +141,11 @@ func (b *books) GetByID(ctx context.Context, bookID int64) *dbo.GetBookIDRepo {
 		&book.PageCount,
 		&book.Author,
 		&book.Price,
-		//&book.Comments,
+		&book.Comments,
 		&book.Value,
 	); err != nil {
-		fmt.Println(err)
-		return &dbo.GetBookIDRepo{
-			Error: err,
-		}
+		return nil, err
 	}
 
-	return &book
+	return &book, nil
 }

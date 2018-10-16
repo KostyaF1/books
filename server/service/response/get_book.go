@@ -7,9 +7,10 @@ import (
 type (
 	GetBookResp struct {
 		AllBooks []*dbo.GetBookRepo `json:"all_books"`
-		Error    error
+		Error    string             `json:"error"`
 	}
 	GetBookIDResp struct {
-		Book *dbo.GetBookIDRepo `json:"book"`
+		Book  *dbo.GetBookIDRepo `json:"book"`
+		Error string             `json:"error"`
 	}
 )

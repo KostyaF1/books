@@ -5,14 +5,13 @@ import (
 	"books/server/db/dbo"
 	"books/server/db/query"
 	"context"
-	"log"
 )
 
 type Comments interface {
-	Add(ctx context.Context, coment dbo.Comment) (*dbo.AddCommentRepo, error)
-	AddAnswer(ctx context.Context, coment dbo.Comment) (*dbo.AddCommentRepo, error)
-	GetCommentsRepo(ctx context.Context, bookID int64) []*dbo.GetCommentsRepo
-	GetByID(ctx context.Context, commID int64) *dbo.GetCommIDRepo
+	Add(ctx context.Context, coment dbo.Comment) error
+	AddAnswer(ctx context.Context, coment dbo.Comment) error
+	GetCommentsRepo(ctx context.Context, bookID int64) ([]*dbo.GetCommentsRepo, error)
+	GetByID(ctx context.Context, commID int64) (*dbo.GetCommIDRepo, error)
 	Delete(ctx context.Context, id int64) error
 }
 
@@ -30,54 +29,31 @@ func (c *comments) Inject(conn db.Connector) {
 	c.dbConn = conn
 }
 
-func (c *comments) Add(ctx context.Context, comment dbo.Comment) (*dbo.AddCommentRepo, error) {
+func (c *comments) Add(ctx context.Context, comment dbo.Comment) error {
 	dbConn := c.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
-	if err != nil {
-		return nil, err
-	}
-	var commentID int64
+	_, err = tx.ExecContext(ctx, query.AddComment,
+		comment.BookID, comment.Body, comment.Author)
 
-	err = tx.QueryRowContext(ctx, query.AddComment,
-		comment.BookID, comment.Body, comment.Author).Scan(&commentID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dbo.AddCommentRepo{
-		ID:     commentID,
-		Author: comment.Author,
-	}, tx.Commit()
+	return err
 }
 
-func (c *comments) AddAnswer(ctx context.Context, comment dbo.Comment) (*dbo.AddCommentRepo, error) {
+func (c *comments) AddAnswer(ctx context.Context, comment dbo.Comment) error {
 	dbConn := c.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
-	if err != nil {
-		return nil, err
-	}
-	var commentID int64
+	_, err = tx.ExecContext(ctx, query.AddCommentAnswer,
+		comment.BookID, comment.Body, comment.Author, comment.Father)
 
-	err = tx.QueryRowContext(ctx, query.AddCommentAnswer,
-		comment.BookID, comment.Body, comment.Author, comment.Father).Scan(&commentID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dbo.AddCommentRepo{
-		ID:     commentID,
-		Author: comment.Author,
-		Father: comment.Father,
-	}, tx.Commit()
+	return err
 }
 
-func (c *comments) GetCommentsRepo(ctx context.Context, bookID int64) []*dbo.GetCommentsRepo {
+func (c *comments) GetCommentsRepo(ctx context.Context, bookID int64) ([]*dbo.GetCommentsRepo, error) {
 	dbConn := c.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetComments, bookID)
 	if err != nil {
-		log.Println("Error when GetAll" + err.Error())
+		return nil, err
 	}
 
 	var comments []*dbo.GetCommentsRepo
@@ -94,14 +70,14 @@ func (c *comments) GetCommentsRepo(ctx context.Context, bookID int64) []*dbo.Get
 		})
 	}
 
-	return comments
+	return comments, err
 }
 
-func (c *comments) GetByID(ctx context.Context, commID int64) *dbo.GetCommIDRepo {
+func (c *comments) GetByID(ctx context.Context, commID int64) (*dbo.GetCommIDRepo, error) {
 	dbConn := c.dbConn.Connect()
 	rows, err := dbConn.QueryContext(ctx, query.GetCommByID, commID)
 	if err != nil {
-		log.Println("Error when GetAll" + err.Error())
+		return nil, err
 	}
 
 	var (
@@ -116,7 +92,7 @@ func (c *comments) GetByID(ctx context.Context, commID int64) *dbo.GetCommIDRepo
 	return &dbo.GetCommIDRepo{
 		Comment: comment,
 		Answer:  answer,
-	}
+	}, err
 }
 
 func (c *comments) Delete(ctx context.Context, id int64) error {

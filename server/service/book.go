@@ -41,47 +41,34 @@ func (b *book) CreateBook(ctx context.Context, req request.CreateBookReq) respon
 		Price:         req.Price,
 	}
 
-	bookResp, err := b.books.Create(ctx, book)
+	err := b.books.Create(ctx, &book)
+
 	if err != nil {
 		return response.CreateBookResp{
-			Error: err,
+			Error: err.Error(),
 		}
 	}
-	return response.CreateBookResp{
-		ID:            bookResp.ID,
-		Name:          bookResp.Name,
-		Genre:         bookResp.Genre,
-		BookType:      bookResp.BookType,
-		PageCount:     bookResp.PageCount,
-		AuthorName:    bookResp.AuthorName,
-		AuthorSurname: bookResp.AuthorSurname,
-		Price:         bookResp.Price,
-		Error:         err,
-	}
+
+	return response.CreateBookResp{}
 }
 
 func (b *book) DeleteBook(ctx context.Context, req request.DeleteBookReq) response.DeleteBookResp {
-	book := dbo.Book{
-		ID: req.ID,
-	}
+	err := b.books.Delete(ctx, req.ID)
 
-	d_id, d_name, err := b.books.Delete(ctx, book.ID)
 	if err != nil {
 		return response.DeleteBookResp{
-			Error: err,
+			Error: err.Error(),
 		}
 	}
-	return response.DeleteBookResp{
-		ID:   d_id,
-		Name: d_name,
-	}
+
+	return response.DeleteBookResp{}
 }
 
 func (b *book) GetAllBooks(ctx context.Context) response.GetBookResp {
 	allBooks, err := b.books.GetAll(ctx)
 	if err != nil {
 		return response.GetBookResp{
-			Error: err,
+			Error: err.Error(),
 		}
 	}
 	return response.GetBookResp{
@@ -90,9 +77,15 @@ func (b *book) GetAllBooks(ctx context.Context) response.GetBookResp {
 }
 
 func (b *book) GetBookByID(ctx context.Context, id int64) response.GetBookIDResp {
-	Book := b.books.GetByID(ctx, id)
+	Book, err := b.books.GetByID(ctx, id)
 
+	if err != nil {
+		return response.GetBookIDResp{
+			Error: err.Error(),
+		}
+	}
 	return response.GetBookIDResp{
 		Book: Book,
 	}
+
 }
