@@ -1,5 +1,5 @@
 package request
 
-type DeleteBook struct {
+type DeleteComment struct {
 	ID int64 `json:"id"`
 }

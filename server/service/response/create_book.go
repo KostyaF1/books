@@ -1,5 +1,5 @@
 package response
 
-type CreateBookResp struct {
+type CreateBook struct {
 	Error string `json:"error"`
 }

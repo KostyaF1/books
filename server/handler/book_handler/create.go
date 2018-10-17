@@ -1,4 +1,4 @@
-package bookHandler
+package book_handler
 
 import (
 	"books/server/handler"
@@ -36,7 +36,7 @@ func (*create) Method() (method string) {
 
 func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	var bookReq request.CreateBookReq
+	var bookReq request.CreateBook
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -46,7 +46,7 @@ func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := c.service.CreateBook(ctx, bookReq)
+	response := c.service.Create(ctx, bookReq)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

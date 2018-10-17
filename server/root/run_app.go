@@ -5,7 +5,7 @@ import (
 	"books/server/db"
 	"books/server/db/repo"
 	"books/server/handler"
-	"books/server/handler/bookHandler"
+	"books/server/handler/book_handler"
 	"books/server/handler/comment_handler"
 	"books/server/service"
 	"github.com/gorilla/mux"
@@ -32,35 +32,38 @@ func (a *App) Run() {
 	book := service.NewBook()
 	book.Inject(booksRepo)
 
-	createBookHandler := bookHandler.NewCreate()
+	createBookHandler := book_handler.NewCreate()
 	createBookHandler.Inject(book)
 
-	deleteBookHandler := bookHandler.NewDeleteBook()
+	deleteBookHandler := book_handler.NewDelete()
 	deleteBookHandler.Inject(book)
 
-	getAllBooksHandler := bookHandler.NewGetAllBooks()
+	getAllBooksHandler := book_handler.NewGetAll()
 	getAllBooksHandler.Inject(book)
 
-	getBookIDHandler := bookHandler.NewGetBookByID()
+	getBookIDHandler := book_handler.NewGetByID()
 	getBookIDHandler.Inject(book)
 
 	commentRepo := repo.NewComments()
 	commentRepo.Inject(dbConn)
 
-	comment := service.NewAddComment()
+	comment := service.NewComment()
 	comment.Inject(commentRepo)
 
-	addCommentHandler := comment_handler.NewAddComment()
+	addCommentHandler := comment_handler.NewAdd()
 	addCommentHandler.Inject(comment)
 
 	addCommentAnswerHandler := comment_handler.NewAddCommentAnswer()
 	addCommentAnswerHandler.Inject(comment)
 
-	getCommentsHandler := comment_handler.NewGetCommentsHandler()
+	getCommentsHandler := comment_handler.NewGetAll()
 	getCommentsHandler.Inject(comment)
 
-	getCommentByIDHandler := comment_handler.NewGetCommentByID()
+	getCommentByIDHandler := comment_handler.NewGetByID()
 	getCommentByIDHandler.Inject(comment)
+
+	deleteCommentHandler := comment_handler.NewDelete()
+	deleteCommentHandler.Inject(comment)
 
 	ratingRepo := repo.NewRating()
 	ratingRepo.Inject(dbConn)
@@ -68,7 +71,7 @@ func (a *App) Run() {
 	rating := service.NewRating()
 	rating.Inject(ratingRepo)
 
-	addRatingHandler := handler.NewAddRating()
+	addRatingHandler := handler.NewAdd()
 	addRatingHandler.Inject(rating)
 
 	router := mux.NewRouter()
@@ -104,6 +107,10 @@ func (a *App) Run() {
 	router.
 		Handle(getCommentByIDHandler.Path(), getCommentByIDHandler).
 		Methods(getCommentByIDHandler.Method())
+
+	router.
+		Handle(deleteCommentHandler.Path(), deleteCommentHandler).
+		Methods(deleteCommentHandler.Method())
 
 	router.
 		Handle(addRatingHandler.Path(), addRatingHandler).

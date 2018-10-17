@@ -33,7 +33,7 @@ func (*addAnswer) Method() (method string) {
 }
 
 func (a *addAnswer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addComment request.AddCommentReq
+	var addComment request.AddComment
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -43,7 +43,7 @@ func (a *addAnswer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := a.service.AddCommentAnswer(ctx, addComment)
+	response := a.service.AddAnswer(ctx, addComment)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

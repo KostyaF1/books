@@ -11,12 +11,11 @@ type Book struct {
 	PageCount     int    `json:"page_count"`
 	AuthorName    string `json:"author_name"`
 	AuthorSurname string `json:"author_surname"`
-	Author        string `json:"author"`
 	Price         int    `json:"price"`
 }
 
 type (
-	GetBookRepo struct {
+	GetBook struct {
 		ID        int64          `json:"id"`
 		Name      string         `json:"name"`
 		Genre     pq.StringArray `json:"genre"`
@@ -26,7 +25,7 @@ type (
 		Price     int            `json:"price"`
 		Value     float64        `json:"value"`
 	}
-	GetBookIDRepo struct {
+	GetBookID struct {
 		ID        int64   `json:"id"`
 		BookName  string  `json:"book_name"`
 		Genre     string  `json:"genre"`

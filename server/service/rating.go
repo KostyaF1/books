@@ -8,7 +8,7 @@ import (
 )
 
 type Rating interface {
-	AddRating(ctx context.Context, req request.RatingReq) response.RatingResp
+	Add(ctx context.Context, req request.Rating) response.Rating
 }
 
 type rating struct {
@@ -25,15 +25,13 @@ func (r *rating) Inject(addRating repo.Ratings) {
 	r.addRating = addRating
 }
 
-func (r *rating) AddRating(ctx context.Context, req request.RatingReq) response.RatingResp {
-	err := r.addRating.Add(ctx, req.StoreUnitID, req.Value)
-
-	if err != nil {
-		return response.RatingResp{
-			Error: err,
+func (r *rating) Add(ctx context.Context, req request.Rating) response.Rating {
+	if err := r.addRating.Add(ctx, req.ID, req.Value); err != nil {
+		return response.Rating{
+			Error: err.Error(),
 		}
 	}
-	return response.RatingResp{
-		Error: nil,
+	return response.Rating{
+		Error: "nil",
 	}
 }

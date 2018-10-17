@@ -3,13 +3,13 @@ package response
 import "books/server/db/dbo"
 
 type (
-	GetCommentsResp struct {
-		Comments []*dbo.GetCommentsRepo `json:"comments"`
-		Error    error
+	GetComments struct {
+		Comments []*dbo.GetComments `json:"comments"`
+		Error    string             `json:"error"`
 	}
 
-	GetCommIDResp struct {
-		Comm  *dbo.GetCommIDRepo `json:"comm"`
-		Error error
+	GetCommID struct {
+		Comm  *dbo.GetCommID `json:"comm"`
+		Error string         `json:"error"`
 	}
 )

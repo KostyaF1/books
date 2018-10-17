@@ -1,7 +1,6 @@
 package request
 
-type CreateBookReq struct {
-	ID            int64  `json:"id"`
+type CreateBook struct {
 	Name          string `json:"name"`
 	Genre         string `json:"genre"`
 	BookType      string `json:"book_type"`

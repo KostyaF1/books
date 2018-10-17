@@ -13,7 +13,7 @@ type add struct {
 	service service.Comment
 }
 
-func NewAddComment() *add {
+func NewAdd() *add {
 	return new(add)
 }
 
@@ -33,7 +33,7 @@ func (*add) Method() (method string) {
 }
 
 func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addNewComment request.AddCommentReq
+	var addNewComment request.AddComment
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -43,7 +43,7 @@ func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := a.service.AddComment(ctx, addNewComment)
+	response := a.service.Add(ctx, addNewComment)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

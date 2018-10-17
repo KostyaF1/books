@@ -1,6 +1,6 @@
 package query
 
-const GetAllUnitsQuerie = `
+const GetBooks = `
 SELECT store_units.id ,
       book_products.name AS book_name,
        array(SELECT genres.name

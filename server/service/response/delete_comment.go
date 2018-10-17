@@ -1,5 +1,5 @@
 package response
 
-type DeleteBook struct {
+type DeleteComment struct {
 	Error string `json:"error"`
 }

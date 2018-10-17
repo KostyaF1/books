@@ -1,5 +1,5 @@
 package response
 
-type AddCommentResp struct {
-	Error error `json:"error"`
+type AddComment struct {
+	Error string `json:"error,omitempty"`
 }
