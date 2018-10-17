@@ -1,4 +1,4 @@
-package bookHandler
+package book_handler
 
 import (
 	"books/server/handler"
@@ -12,7 +12,7 @@ type getAll struct {
 	service service.Book
 }
 
-func NewGetAllBooks() *getAll {
+func NewGetAll() *getAll {
 	return new(getAll)
 }
 
@@ -34,7 +34,7 @@ func (*getAll) Method() (method string) {
 func (g *getAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	response := g.service.GetAllBooks(ctx)
+	response := g.service.GetAll(ctx)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

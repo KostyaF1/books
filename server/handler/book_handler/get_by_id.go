@@ -1,4 +1,4 @@
-package bookHandler
+package book_handler
 
 import (
 	"books/server/handler"
@@ -14,7 +14,7 @@ type getByID struct {
 	service service.Book
 }
 
-func NewGetBookByID() *getByID {
+func NewGetByID() *getByID {
 	return new(getByID)
 }
 
@@ -46,7 +46,7 @@ func (g *getByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := g.service.GetBookByID(ctx, id64)
+	response := g.service.GetByID(ctx, id64)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

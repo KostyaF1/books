@@ -12,7 +12,7 @@ type add struct {
 	service service.Rating
 }
 
-func NewAddRating() *add {
+func NewAdd() *add {
 	return new(add)
 }
 
@@ -32,7 +32,7 @@ func (*add) Method() (method string) {
 }
 
 func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var addRating request.RatingReq
+	var addRating request.Rating
 	defer r.Body.Close()
 	ctx := r.Context()
 
@@ -42,7 +42,7 @@ func (a *add) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := a.service.AddRating(ctx, addRating)
+	response := a.service.Add(ctx, addRating)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

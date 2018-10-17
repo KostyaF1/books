@@ -5,12 +5,12 @@ import (
 )
 
 type (
-	GetBookResp struct {
-		AllBooks []*dbo.GetBookRepo `json:"all_books"`
-		Error    string             `json:"error"`
+	GetBook struct {
+		AllBooks []*dbo.GetBook `json:"all_books"`
+		Error    string         `json:"error"`
 	}
-	GetBookIDResp struct {
-		Book  *dbo.GetBookIDRepo `json:"book"`
-		Error string             `json:"error"`
+	GetBookID struct {
+		Book  *dbo.GetBookID `json:"book"`
+		Error string         `json:"error"`
 	}
 )

@@ -14,7 +14,7 @@ type getByID struct {
 	service service.Comment
 }
 
-func NewGetCommentByID() *getByID {
+func NewGetByID() *getByID {
 	return new(getByID)
 }
 
@@ -46,7 +46,7 @@ func (g *getByID) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := g.service.GetCommByID(ctx, id64)
+	response := g.service.GetByID(ctx, id64)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())

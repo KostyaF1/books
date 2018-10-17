@@ -14,12 +14,12 @@ type getAll struct {
 	service service.Comment
 }
 
-func NewGetCommentsHandler() *getAll {
+func NewGetAll() *getAll {
 	return new(getAll)
 }
 
-func (g *getAll) Inject(getComments service.Comment) {
-	g.service = getComments
+func (g *getAll) Inject(getAll service.Comment) {
+	g.service = getAll
 }
 
 var _ http.Handler = (*getAll)(nil)
@@ -47,7 +47,7 @@ func (g *getAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := g.service.GetComments(ctx, id64)
+	response := g.service.GetAll(ctx, id64)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Fprintf(w, "error: %s", err.Error())
