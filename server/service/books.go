@@ -31,24 +31,43 @@ func (b *books) Inject(books repo.Books) {
 }
 
 func (b *books) Create(ctx context.Context, req request.CreateBook) response.CreateBook {
-	book := dbo.Book{
-		Name:          req.Name,
-		Genre:         req.Genre,
-		BookType:      req.BookType,
-		PageCount:     req.PageCount,
-		AuthorName:    req.AuthorName,
-		AuthorSurname: req.AuthorSurname,
-		Price:         req.Price,
+	respErr := response.CreateBook{
+		Error: "Empty field",
 	}
-
-	if err := b.books.Create(ctx, &book); err != nil {
-		return response.CreateBook{
-			Error: err.Error(),
+	switch {
+	case req.Name == "":
+		return respErr
+	case req.Genre == "":
+		return respErr
+	case req.BookType == "":
+		return respErr
+	case req.PageCount == 0:
+		return respErr
+	case req.AuthorName == "":
+		return respErr
+	case req.AuthorSurname == "":
+		return respErr
+	case req.Price == 0:
+		return respErr
+	default:
+		book := dbo.Book{
+			Name:          req.Name,
+			Genre:         req.Genre,
+			BookType:      req.BookType,
+			PageCount:     req.PageCount,
+			AuthorName:    req.AuthorName,
+			AuthorSurname: req.AuthorSurname,
+			Price:         req.Price,
+		}
+		if err := b.books.Create(ctx, &book); err != nil {
+			return response.CreateBook{
+				Error: err.Error(),
+			}
 		}
 	}
 
 	return response.CreateBook{
-		Error: "nil",
+		Error: "",
 	}
 }
 
@@ -60,7 +79,7 @@ func (b *books) Delete(ctx context.Context, req request.DeleteBook) response.Del
 	}
 
 	return response.DeleteBook{
-		Error: "nil",
+		Error: "",
 	}
 }
 
