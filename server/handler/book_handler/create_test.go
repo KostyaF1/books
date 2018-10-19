@@ -6,6 +6,7 @@ import (
 	"books/server/service/response"
 	"context"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -26,7 +27,7 @@ func TestCreate_ServeHTTP(t *testing.T) {
 			assert.NotEqual(t, req.Price, 0)
 
 			return response.CreateBook{
-				Error: "nil",
+				Error: "",
 			}
 		}
 
@@ -47,12 +48,12 @@ func TestCreate_ServeHTTP(t *testing.T) {
 
 		r := httptest.NewRequest("POST", "/book", bodyReader)
 
-		w := httptest.ResponseRecorder{}
+		w := &httptest.ResponseRecorder{}
 
-		handler.ServeHTTP(&w, r)
+		handler.ServeHTTP(w, r)
 	})
 
-	t.Run("check resp", func(t *testing.T) {
+	t.Run("check json.Decoder.Decode Error", func(t *testing.T) {
 
 		mock := mock_service.Books{}
 
@@ -65,46 +66,17 @@ func TestCreate_ServeHTTP(t *testing.T) {
 		handler := NewCreate()
 		handler.Inject(&mock)
 
-		js := `
-		}`
+		js := `{`
 
 		bodyReader := strings.NewReader(js)
 
 		r := httptest.NewRequest("POST", "/book", bodyReader)
 
-		w := httptest.ResponseRecorder{}
+		w := &httptest.ResponseRecorder{}
 
-		handler.ServeHTTP(&w, r)
+		handler.ServeHTTP(w, r)
 
-		assert.Equal(t, 400, w.Code)
-
-	})
-
-	t.Run("check service err err", func(t *testing.T) {
-
-		mock := mock_service.Books{}
-
-		mock.Mock.Create = func(ctx context.Context, req request.CreateBook) response.CreateBook {
-			return response.CreateBook{
-				Error: "nil",
-			}
-		}
-
-		handler := NewCreate()
-		handler.Inject(&mock)
-
-		js := `
-		}`
-
-		bodyReader := strings.NewReader(js)
-
-		r := httptest.NewRequest("POST", "/book", bodyReader)
-
-		w := httptest.ResponseRecorder{}
-
-		handler.ServeHTTP(&w, r)
-
-		assert.Equal(t, 400, w.Code)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
 
 	})
 

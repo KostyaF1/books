@@ -5,6 +5,7 @@ import (
 	"books/server/service"
 	"books/server/service/request"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 )
 
@@ -40,15 +41,25 @@ func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if err := json.NewDecoder(r.Body).Decode(&bookReq); err != nil {
-		//fmt.Fprintf(w, "error: %s", err.Error())
+		//if _, err := fmt.Fprintf(w, "error: %s", err.Error()); err != nil {
+		//	w.WriteHeader(http.StatusBadRequest)
+		//	return
+		//}
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	response := c.service.Create(ctx, bookReq)
+	if ok := assert.Empty(nil, response, nil); ok == true {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		//fmt.Fprintf(w, "error: %s", err.Error())
+		//if _, err = fmt.Fprintf(w, "error: %s", err.Error()); err != nil {
+		//	w.WriteHeader(http.StatusBadRequest)
+		//	return
+		//}
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
