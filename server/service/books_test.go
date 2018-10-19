@@ -10,7 +10,7 @@ import (
 )
 
 //TestBook_CreateBook...
-func TestBook_CreateBook(t *testing.T) {
+func TestBooks_Create(t *testing.T) {
 
 	t.Run("check name and returned error", func(t *testing.T) {
 		const (
@@ -22,19 +22,20 @@ func TestBook_CreateBook(t *testing.T) {
 		mock.Mock.Create = func(ctx context.Context, book *dbo.Book) error {
 			if book.Name != expectedName {
 				t.Fail()
+				return errors.New("some error")
 			}
 
-			return errors.New("some error")
+			return nil
 		}
 
 		book := NewBook()
 		book.Inject(&mock)
 
-		resp := book.CreateBook(context.Background(), request.CreateBookReq{
+		resp := book.Create(context.Background(), request.CreateBook{
 			Name: expectedName,
 		})
 
-		if resp.Error == "" {
+		if resp.Error != "nil" {
 			t.Fail()
 		}
 	})
@@ -49,7 +50,7 @@ func TestBook_CreateBook(t *testing.T) {
 		book := NewBook()
 		book.Inject(mock)
 
-		resp := book.CreateBook(context.Background(), request.CreateBookReq{})
+		resp := book.Create(context.Background(), request.CreateBook{})
 
 		if resp.Error != "" {
 			t.Fail()
@@ -59,7 +60,7 @@ func TestBook_CreateBook(t *testing.T) {
 }
 
 //TestBook_DeleteBook...
-func TestBook_DeleteBook(t *testing.T) {
+func TestBook_Delete(t *testing.T) {
 
 	t.Run("check id and returned error", func(t *testing.T) {
 
@@ -76,7 +77,7 @@ func TestBook_DeleteBook(t *testing.T) {
 		book := NewBook()
 		book.Inject(&mock)
 
-		resp := book.DeleteBook(context.Background(), request.DeleteBookReq{
+		resp := book.Delete(context.Background(), request.DeleteBook{
 			ID: 5,
 		})
 
@@ -95,7 +96,7 @@ func TestBook_DeleteBook(t *testing.T) {
 		book := NewBook()
 		book.Inject(mock)
 
-		resp := book.DeleteBook(context.Background(), request.DeleteBookReq{
+		resp := book.Delete(context.Background(), request.DeleteBook{
 			ID: 0,
 		})
 
@@ -113,9 +114,9 @@ func TestBook_GetAll(t *testing.T) {
 
 		mock := mock_repo.Books{}
 
-		mock.Mock.GetAll = func(ctx context.Context) ([]*dbo.GetBookRepo, error) {
-			var allBooks []*dbo.GetBookRepo
-			allBooks = append(allBooks, &dbo.GetBookRepo{
+		mock.Mock.GetAll = func(ctx context.Context) ([]*dbo.GetBook, error) {
+			var allBooks []*dbo.GetBook
+			allBooks = append(allBooks, &dbo.GetBook{
 				Name:     "lknk",
 				BookType: "book",
 			})
@@ -124,7 +125,7 @@ func TestBook_GetAll(t *testing.T) {
 		book := NewBook()
 		book.Inject(&mock)
 
-		resp := book.GetAllBooks(context.Background())
+		resp := book.GetAll(context.Background())
 
 		if resp.Error != "" {
 			t.Fail()
@@ -140,7 +141,7 @@ func TestBook_GetAll(t *testing.T) {
 	t.Run("check no panic on nil error", func(t *testing.T) {
 		mock := &mock_repo.Books{}
 
-		mock.Mock.GetAll = func(ctx context.Context) ([]*dbo.GetBookRepo, error) {
+		mock.Mock.GetAll = func(ctx context.Context) ([]*dbo.GetBook, error) {
 
 			return nil, errors.New("ERRRORRR")
 		}
@@ -148,7 +149,7 @@ func TestBook_GetAll(t *testing.T) {
 		book := NewBook()
 		book.Inject(mock)
 
-		resp := book.GetAllBooks(context.Background())
+		resp := book.GetAll(context.Background())
 
 		if resp.Error != "" {
 			t.Fail()
@@ -158,16 +159,16 @@ func TestBook_GetAll(t *testing.T) {
 }
 
 //TestBook_GetBookByID...
-func TestBook_GetBookByID(t *testing.T) {
+func TestBook_GetByID(t *testing.T) {
 
 	t.Run("check value and returned error", func(t *testing.T) {
 
 		mock := mock_repo.Books{}
 
-		mock.Mock.GetByID = func(ctx context.Context, id int64) (*dbo.GetBookIDRepo, error) {
+		mock.Mock.GetByID = func(ctx context.Context, id int64) (*dbo.GetBookID, error) {
 
-			value := &dbo.GetBookIDRepo{
-				//BookName: "lknk",
+			value := &dbo.GetBookID{
+				BookName: "lknk",
 				BookType: "book",
 			}
 			return value, nil
@@ -175,7 +176,7 @@ func TestBook_GetBookByID(t *testing.T) {
 		book := NewBook()
 		book.Inject(&mock)
 
-		resp := book.GetBookByID(context.Background(), 5)
+		resp := book.GetByID(context.Background(), 5)
 		if resp.Book.BookName == "" {
 			t.Fail()
 		}
@@ -185,7 +186,7 @@ func TestBook_GetBookByID(t *testing.T) {
 	t.Run("check no panic on nil error", func(t *testing.T) {
 		mock := &mock_repo.Books{}
 
-		mock.Mock.GetByID = func(ctx context.Context, id int64) (*dbo.GetBookIDRepo, error) {
+		mock.Mock.GetByID = func(ctx context.Context, id int64) (*dbo.GetBookID, error) {
 			if id == 0 {
 				return nil, errors.New("some error")
 			}
@@ -196,7 +197,7 @@ func TestBook_GetBookByID(t *testing.T) {
 		book := NewBook()
 		book.Inject(mock)
 
-		resp := book.GetBookByID(context.Background(), 5)
+		resp := book.GetByID(context.Background(), 5)
 
 		if resp.Error != "" {
 			t.Fail()
