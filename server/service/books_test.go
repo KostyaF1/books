@@ -22,9 +22,10 @@ func TestBooks_Create(t *testing.T) {
 		mock.Mock.Create = func(ctx context.Context, book *dbo.Book) error {
 			if book.Name != expectedName {
 				t.Fail()
+				return errors.New("some error")
 			}
 
-			return errors.New("some error")
+			return nil
 		}
 
 		book := NewBook()
@@ -34,7 +35,7 @@ func TestBooks_Create(t *testing.T) {
 			Name: expectedName,
 		})
 
-		if resp.Error == "" {
+		if resp.Error != "nil" {
 			t.Fail()
 		}
 	})
@@ -167,7 +168,7 @@ func TestBook_GetByID(t *testing.T) {
 		mock.Mock.GetByID = func(ctx context.Context, id int64) (*dbo.GetBookID, error) {
 
 			value := &dbo.GetBookID{
-				//BookName: "lknk",
+				BookName: "lknk",
 				BookType: "book",
 			}
 			return value, nil

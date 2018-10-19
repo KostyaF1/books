@@ -5,7 +5,6 @@ import (
 	"books/server/service"
 	"books/server/service/request"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -41,7 +40,7 @@ func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if err := json.NewDecoder(r.Body).Decode(&bookReq); err != nil {
-		fmt.Fprintf(w, "error: %s", err.Error())
+		//fmt.Fprintf(w, "error: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -49,7 +48,7 @@ func (c *create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	response := c.service.Create(ctx, bookReq)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		fmt.Fprintf(w, "error: %s", err.Error())
+		//fmt.Fprintf(w, "error: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
