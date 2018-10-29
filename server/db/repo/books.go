@@ -135,7 +135,7 @@ func (b *books) Delete(ctx context.Context, id int64) error {
 // naming
 func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBook, error) {
 	dbConn := b.dbConn.Connect()
-	rows, err := dbConn.QueryContext(ctx, query.GetBooks)
+	rows, err := dbConn.QueryContext(ctx, query.GetBooks1)
 	if err != nil {
 		return nil, err
 	}
@@ -146,20 +146,21 @@ func (b *books) GetAll(ctx context.Context) ([]*dbo.GetBook, error) {
 		var book dbo.GetBook
 
 		if err = rows.Scan(
-			&book.ID,
+			//&book.ID,
 			&book.Name,
-			&book.Genre,
-			&book.BookType,
-			&book.PageCount,
-			&book.Author,
-			&book.Price,
-			&book.Value,
+			//&book.Genre,
+			//&book.BookType,
+			//&book.PageCount,
+			//&book.Author,
+			//&book.Price,
+			//&book.Value,
 		); err != nil {
 			return nil, err
 		}
 
 		allBooks = append(allBooks, &book)
 	}
+
 	return allBooks, nil
 }
 
