@@ -1,0 +1,34 @@
+version: '3'
+networks:
+  server_net:
+    driver: bridge
+services:
+    db:
+        container_name: db
+        networks:
+          - server_net
+        image: "postgres:10"
+#        volumes_from:
+#          - pg_data
+        volumes:
+          - /datasets/data:/var/lib/postgresql/data
+        environment:
+          - POSTGRES_USER=$DB_USER
+          - POSTGRES_DATABASE=$DB_DATABASE
+          - POSTGRES_PORT=$DB_PORT
+          - POSTGRES_PASSWORD=$DB_PASSWORD
+        ports:
+          - 5432
+    server:
+        build:
+           dockerfile: Dockerfile
+           context: .
+        restart: always
+        networks:
+          - server_net
+        environment: ["DRIVER=$DRIVER",  "DBURL=$DBURL"]
+        ports:
+          - 5001:8080
+
+        
+        

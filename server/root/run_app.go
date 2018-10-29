@@ -7,10 +7,13 @@ import (
 	"books/server/handler"
 	"books/server/handler/book_handler"
 	"books/server/handler/comment_handler"
+	"books/server/schema"
 	"books/server/service"
-	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
 )
 
 type App struct {
@@ -25,6 +28,10 @@ func (a *App) Run() {
 
 	dbConn := db.NewConn()
 	dbConn.Inject(config)
+
+	schema := schema.NewSchema()
+	schema.Inject(dbConn)
+	schema.CreateTables()
 
 	booksRepo := repo.NewBooks()
 	booksRepo.Inject(dbConn)
@@ -118,8 +125,8 @@ func (a *App) Run() {
 
 	server := http.Server{
 		Handler: router,
-		Addr:    "localhost:8081",
+		Addr:    ":8080",
 	}
-
+	log.Println("The Server is Listening")
 	server.ListenAndServe()
 }
