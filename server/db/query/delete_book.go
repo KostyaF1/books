@@ -2,12 +2,12 @@ package query
 
 const DeleteRating = `
 DELETE
-FROM rating
+FROM ratings
 WHERE store_unit_id = $1`
 
 const DeleteAuthProd = `
 DELETE
-FROM author_products
+FROM authors_products
 WHERE book_product_id IN (SELECT store_units.book_product_id
 FROM store_units WHERE store_units.id = $1) RETURNING book_product_id;`
 

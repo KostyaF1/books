@@ -31,6 +31,7 @@ func (b *books) Inject(conn db.Connector) {
 
 // only error
 func (b *books) Create(ctx context.Context, book *dbo.Book) error {
+
 	dbConn := b.dbConn.Connect()
 	tx, err := dbConn.BeginTx(ctx, nil)
 
@@ -42,7 +43,6 @@ func (b *books) Create(ctx context.Context, book *dbo.Book) error {
 		tx.Rollback()
 		return err
 	}
-
 	var authorID int64
 
 	if err = tx.QueryRowContext(ctx, query.CreateAuthor,
@@ -64,9 +64,18 @@ func (b *books) Create(ctx context.Context, book *dbo.Book) error {
 		return err
 	}
 
-	_, err = tx.ExecContext(ctx, query.StoreUnit,
-		bookID, book.Price)
+	var unitID int64
 
+	err = tx.QueryRowContext(ctx, query.StoreUnit,
+		bookID, book.Price).Scan(&unitID)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.ExecContext(ctx, query.DefRating,
+		unitID)
 	if err != nil {
 		tx.Rollback()
 		return err

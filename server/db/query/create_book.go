@@ -8,11 +8,14 @@ const CreateAuthor = `INSERT INTO authors (first_name, last_name)
 						VALUES ($1, $2) ON CONFLICT (first_name, last_name) DO UPDATE SET
 						first_name = EXCLUDED.first_name RETURNING id;`
 
-const AuthorBook = `INSERT INTO author_products (book_product_id, author_id)
+const AuthorBook = `INSERT INTO authors_products (book_product_id, author_id)
 					VALUES ($1, $2) RETURNING id;`
 
 const GenreBook = `INSERT INTO product_genres (book_product_id, genre_id)
 					VALUES ($1, (SELECT id FROM genres WHERE name = $2));`
+
+const DefRating = `INSERT INTO ratings (store_unit_id, value)
+					VALUES ($1, 0.0);`
 
 const StoreUnit = `INSERT INTO store_units (book_product_id, price)
 					VALUES ($1, $2) ON CONFLICT (book_product_id) DO UPDATE SET

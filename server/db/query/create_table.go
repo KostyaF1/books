@@ -1,6 +1,6 @@
 package query
 
-const CreateDB = `CREATE DATABASE books OWNER postgres;`
+const CreateDB = `CREATE DATABASE books_test OWNER postgres;`
 
 const Schema = `
 CREATE TABLE IF NOT EXISTS product_types (

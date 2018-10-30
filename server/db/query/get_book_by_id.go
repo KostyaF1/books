@@ -13,11 +13,11 @@ SELECT store_units.id ,
        book_products.page_count AS page_count,
        array(SELECT authors.first_name || ' ' || authors.last_name
              FROM authors
-             WHERE authors.id IN (SELECT author_products.author_id
-                                  FROM author_products
-                                  WHERE author_products.book_product_id = store_units.book_product_id)) AS author,
+             WHERE authors.id IN (SELECT authors_products.author_id
+                                  FROM authors_products
+                                  WHERE authors_products.book_product_id = store_units.book_product_id)) AS author,
        price AS price,
-       (SELECT AVG(value) FROM rating 
+       (SELECT AVG(value) FROM ratings
 WHERE store_unit_id = store_units.id AND store_units.book_product_id = book_products.id) AS value,
 array(SELECT comments.body FROM comments WHERE store_units.id = comments.book_unit_id) as comm
 FROM store_units
