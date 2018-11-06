@@ -7,8 +7,8 @@ COPY . .
 ENV GOPATH=/go                              \
     PATH=/go/bin:$PATH
 #    #PGDATA=/usr/local/var/postgres pg_ctl=reload \
-#    DRIVER=postgres                              \
-#    DBURL="postgresql://postgres:1111@localhost:5432/books?sslmode=disable"
+    DRIVER=postgres                              \
+    DBURL="postgresql://postgres:1111@localhost:5432/books?sslmode=disable"
 
 RUN go get -v ./... && go build ./server/main.go
 

@@ -8,8 +8,6 @@ services:
         networks:
           - server_net
         image: "postgres:10"
-#        volumes_from:
-#          - pg_data
         volumes:
           - /datasets/data:/var/lib/postgresql/data
         environment:
